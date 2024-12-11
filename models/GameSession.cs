@@ -1,6 +1,8 @@
 ﻿using game_service.classes;
+using game_service.classes.games;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace game_service.models
 {
@@ -32,5 +34,52 @@ namespace game_service.models
 		public virtual ICollection<GameAction> GameActions { get; set; }
 		[ForeignKey(nameof(GameHistoryId))]
 		public virtual GameHistory History { get; set; }
+		[Required]
+		public string SerializedGame {  get; set; }
+		[NotMapped]
+		public AbstractGame Game { get => DeserializeGameData(); set=> SerializedGame = SerializeGame(value); }
+
+		private string SerializeGame(AbstractGame game)
+		{
+			var data = new GameData
+			{
+				GameType = this.GameType,
+				BetAmount = game.BetAmount,
+				CurrentMultiplier = game.CurrentMultiplier,
+				GameId = game.GameId,
+				Status = game.Status,
+				GamesValues = GetGameValues(game),
+			};
+
+			return JsonSerializer.Serialize(data);
+		}
+
+		private AbstractGame DeserializeGameData()
+		{
+
+			var game = JsonSerializer.Deserialize<GameData>(SerializedGame);
+			return GameFactory.CreateGameStatic(game);
+		}
+
+		public Dictionary<string, object> GetGameValues(AbstractGame game)
+		{
+			var data = new Dictionary<string, object>();
+
+			switch (game)
+			{
+				case MinesGame mines:
+					data["field"] = mines.field; break;
+				case DiceGame dice:
+					break;
+				case PlinkoGame plinko:
+					break;
+				case ChickenGame chicken:
+					break;
+				case BlackJackGame blackJack:
+					break;
+			}
+
+			return data;
+		}
 	}
 }

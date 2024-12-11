@@ -7,6 +7,8 @@ namespace game_service.Controllers
     [Route("game/[controller]")]
     public class GameController : ControllerBase
     {
+
+
         private readonly AbstractGameFactory _gameFactory;
 
         public GameController(AbstractGameFactory gameFactory)

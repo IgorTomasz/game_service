@@ -12,10 +12,15 @@ namespace game_service.models
 		[Required]
 		public DateTime Timestamp { get; set; }
 		[Required]
-		public string Type { get; set; }
+		public ActionType Type { get; set; }
 		[Required]
-		public string ActionData { get; set; }
+		public Dictionary<string, object> ActionData { get; set; }
 		[ForeignKey(nameof(GameSessionId))]
 		public virtual GameSession GameSession { get; set; }
+	}
+
+	public enum ActionType
+	{
+		Start, Move, End, System
 	}
 }

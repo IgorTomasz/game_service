@@ -15,7 +15,6 @@ namespace game_service
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<GameDatabaseContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-            builder.Services.AddSingleton<AbstractGameFactory, GameFactory>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
