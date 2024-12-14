@@ -1,4 +1,7 @@
 ﻿
+
+using game_service.models.DTOs;
+
 namespace game_service.classes.games
 {
 	public class MinesGame : AbstractGame
@@ -11,22 +14,44 @@ namespace game_service.classes.games
 		public Guid GameId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public GameStatus Status { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public GameType Type { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public bool CashOutEarly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 		public int[] field = new int[25];
+		public int MinesCount { get; set; }
 
 		public decimal GetMultiplier()
 		{
-			throw new NotImplementedException();
+			return CurrentMultiplier;
 		}
 
-		public decimal GetResult()
+		public decimal GetCashWon()
 		{
-			throw new NotImplementedException();
+			return BetAmount * CurrentMultiplier;
 		}
 
 		public GameStatus GetStatus()
 		{
-			throw new NotImplementedException();
+			return Status;
+		}
+
+		public decimal CalculateMultiplier()
+		{
+
+		}
+
+		public bool IsGameOver()
+		{
+
+		}
+
+		public void PlaceMines(int minesCount)
+		{
+
+		}
+
+		public void ValidateMove(MinesPosition position)
+		{
+
 		}
 
 		public static AbstractGame RestoreGameData(GameData gameData)
@@ -54,5 +79,11 @@ namespace game_service.classes.games
 			};
 
 	}
+
+		public void InicializeGame(Dictionary<string, object> gameSettings)
+		{
+			MinesCount = (int)gameSettings["Mines"];
+			PlaceMines(MinesCount);
+		}
 	}
 }

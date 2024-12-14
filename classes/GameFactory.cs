@@ -5,7 +5,7 @@ namespace game_service.classes
 
 	public class GameFactory : AbstractGameFactory
 	{
-		public static AbstractGame CreateGame(GameType gameType, decimal betAmount)
+		public static AbstractGame CreateGameFactory(GameType gameType, decimal betAmount)
 		{
 			switch (gameType)
 			{
@@ -18,7 +18,7 @@ namespace game_service.classes
 			}
 		}
 
-		public static AbstractGame RestoreGame(GameData gameData)
+		public static AbstractGame RestoreGameFactory(GameData gameData)
 		{
 			switch(gameData.GameType)
 			{

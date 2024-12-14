@@ -8,7 +8,7 @@ namespace game_service.classes.games
 		public Guid GameId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public GameStatus Status { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public GameType Type { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
+		public bool CashOutEarly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 		public decimal GetMultiplier()
 		{

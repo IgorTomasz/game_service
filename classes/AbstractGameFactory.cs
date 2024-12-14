@@ -4,7 +4,7 @@ namespace game_service.classes
 {
 	public interface AbstractGameFactory
 	{
-		public static abstract AbstractGame CreateGame(GameType gameType, decimal betAmount);
-		public static abstract AbstractGame RestoreGame(GameData gameData);
+		public static abstract AbstractGame CreateGameFactory(GameType gameType, decimal betAmount);
+		public static abstract AbstractGame RestoreGameFactory(GameData gameData);
 	}
 }

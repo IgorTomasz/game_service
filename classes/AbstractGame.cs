@@ -6,15 +6,16 @@ namespace game_service.classes
 	{
 		public decimal BetAmount { get; set; }
 		public decimal CurrentMultiplier { get; set; }
-		public Guid GameId { get; set; }
 		public GameStatus Status { get; set; }
 		public GameType Type { get; set; }
+		public bool CashOutEarly { get; set; }
 
 		public decimal GetMultiplier();
-		public decimal GetResult();
+		public decimal GetCashWon();
 		public GameStatus GetStatus();
 		public static abstract AbstractGame RestoreGameData(GameData gameData);
 		public static abstract AbstractGame CreateGame(decimal betAmount);
+		public void InicializeGame(Dictionary<string, object> gameSettings);
 
 	}
 
