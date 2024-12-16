@@ -51,10 +51,20 @@ namespace game_service.services
 			await _gameRepository.CreateGameAction(request, gameSessionId);
 		}
 
-		public Task<object> MakeMove(AbstractGame game, Dictionary<string, object> data)
+		public object MakeMove(AbstractGame game, Dictionary<string, object> data)
 		{
 			switch (game)
 			{
+				case PlinkoGame plinko:
+					{
+						plinko.CalculateDrop();
+						return new {
+							CurrentStatus = plinko.Status,
+							Position = plinko.FinalBallPosition,
+							Path = plinko.Path,
+							Multiplier = plinko.CurrentMultiplier
+						};
+					}
 				case MinesGame mines:
 					{
 
@@ -62,11 +72,23 @@ namespace game_service.services
 						mines.ValidateMove(movePosition);
 						var isOver = mines.IsGameOver();
 						var multi = mines.CalculateMultiplier();
-						break;
+						if (isOver) {
+							return new
+							{
+								CurrentStatus = mines.Status,
+								Fields = mines.field
+							};
+						}
+						return new
+						{
+							CurrentStatus = mines.Status,
+							Multiplier = multi,
+						};
 					}
 				case ChickenGame chicken:
 					{
-
+						chicken.ValidateMove();
+						break;
 					}
 				case BlackJackGame blackJack:
 					{

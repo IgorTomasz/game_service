@@ -18,6 +18,8 @@ namespace game_service.classes.games
 		public bool CashOutEarly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 		public int RowsCount { get; set; }
 		public Difficulty Difficulty { get; set; }
+		public decimal FinalBallPosition { get; set; }
+		public char[] Path { get; set; }
 
 		public decimal GetMultiplier()
 		{

@@ -18,6 +18,7 @@ namespace game_service.classes.games
 
 		public int[] field = new int[25];
 		public int MinesCount { get; set; }
+		public int DiscoveredDiamonds { get; set; }
 
 		public decimal GetMultiplier()
 		{
@@ -36,12 +37,20 @@ namespace game_service.classes.games
 
 		public decimal CalculateMultiplier()
 		{
-
+			var diamonds = 25-MinesCount;
+			var multi = (diamonds / MinesCount) + 1 + (((DiscoveredDiamonds / diamonds) * diamonds) / 2) * 0.98;
+			return decimal.Parse(multi.ToString());
 		}
 
-		public bool IsGameOver()
+		public bool IsGameOver(MinesPosition position)
 		{
-
+			var index = position.Y * 5 + position.X;
+			if(field[index] == 0)
+			{
+				return true;
+			}
+			DiscoveredDiamonds++;
+			return false;
 		}
 
 		public void PlaceMines(int minesCount)
@@ -51,7 +60,13 @@ namespace game_service.classes.games
 
 		public void ValidateMove(MinesPosition position)
 		{
+			var isGameOver = IsGameOver(position);
+			if (!isGameOver)
+			{
+				CurrentMultiplier = CalculateMultiplier();
+			}
 
+			Status = GameStatus.EndedLose;
 		}
 
 		public static AbstractGame RestoreGameData(GameData gameData)
@@ -83,6 +98,7 @@ namespace game_service.classes.games
 		public void InicializeGame(Dictionary<string, object> gameSettings)
 		{
 			MinesCount = (int)gameSettings["Mines"];
+			DiscoveredDiamonds = 0;
 			PlaceMines(MinesCount);
 		}
 	}
