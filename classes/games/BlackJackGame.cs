@@ -1,4 +1,5 @@
 ﻿
+
 namespace game_service.classes.games
 {
 	public class BlackJackGame : AbstractGame
@@ -12,17 +13,12 @@ namespace game_service.classes.games
 
 		public decimal GetMultiplier()
 		{
-			throw new NotImplementedException();
-		}
-
-		public decimal GetResult()
-		{
-			throw new NotImplementedException();
+			return CurrentMultiplier;
 		}
 
 		public GameStatus GetStatus()
 		{
-			throw new NotImplementedException();
+			return Status;
 		}
 
 		public static AbstractGame RestoreGameData(GameData gameData)
@@ -45,6 +41,16 @@ namespace game_service.classes.games
 				BetAmount = betAmount,
 				Type = GameType.BlackJack
 			};
+		}
+
+		public decimal GetCashWon()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void InicializeGame(Dictionary<string, object> gameSettings)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -22,7 +22,8 @@ namespace game_service.Controllers
         {
             switch (startGame.Action)
             {
-                case ActionType.Start: {
+                case ActionType.Start:
+                    {
                         AbstractGame game = _gameService.GetGame(startGame);
                         game.InicializeGame(startGame.Data);
                         Guid sessionId = await _gameService.CreateGameSession(game, startGame.UserId, startGame.UserSessionId);
@@ -34,14 +35,78 @@ namespace game_service.Controllers
                             Message = sessionId
                         });
                     }
-                case ActionType.Move: {
+                case ActionType.Move:
+                    {
                         GameSession session = await _gameService.GetGameSession((Guid)startGame.GameSessionId);
                         AbstractGame game = session.Game;
+                        var resp = _gameService.MakeMove(game, startGame.Data);
+						await _gameService.CreateGameAction(startGame, session.GameSessionId);
+                        var dict = new Dictionary<string, object>();
+                        dict["Status"] = resp.Status;
+                        dict["Multiplier"] = resp.Multiplier;
+                        if (resp.Data != null)
+                        {
+							foreach (var kv in resp.Data)
+							{
+								dict[kv.Key] = kv.Value;
+							}
+						}
                         
-                    } break;
-                case ActionType.End: break;
-                case ActionType.System: break;
-            }
+						await _gameService.CreateGameAction(new ProcessGameRequest
+                        {
+                            Type = startGame.Type,
+                            UserId = startGame.UserId,
+                            UserSessionId = session.UserSessionId,
+                            GameSessionId = session.GameSessionId,
+                            Action = ActionType.System,
+                            BetAmount = startGame.BetAmount,
+                            Data = dict
+
+                        }, session.GameSessionId);
+						return Ok(new HttpResponseModel
+                        {
+                            Success = true,
+                            Message = resp
+                        });
+                    }
+                case ActionType.End:
+                    {
+						GameSession session = await _gameService.GetGameSession((Guid)startGame.GameSessionId);
+						AbstractGame game = session.Game;
+						await _gameService.CreateGameAction(startGame, session.GameSessionId);
+						var resp = _gameService.CashOutEarly(game, startGame.Data);
+						var dict = new Dictionary<string, object>();
+						dict["Status"] = resp.Status;
+						dict["Multiplier"] = resp.Multiplier;
+						foreach (var kv in resp.Data)
+						{
+							dict[kv.Key] = kv.Value;
+						}
+						await _gameService.CreateGameAction(new ProcessGameRequest
+						{
+							Type = startGame.Type,
+							UserId = startGame.UserId,
+							UserSessionId = session.UserSessionId,
+							GameSessionId = session.GameSessionId,
+							Action = ActionType.System,
+							BetAmount = startGame.BetAmount,
+							Data = dict
+
+						}, session.GameSessionId);
+						return Ok(new HttpResponseModel
+						{
+							Success = true,
+							Message = resp
+						});
+					}
+                default:
+					return Ok(new HttpResponseModel
+					{
+						Success = false,
+						Error = "No action type was given"
+					});
+					//case ActionType.System: break;
+			}
         }
 
     }

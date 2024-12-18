@@ -4,6 +4,7 @@ using game_service.models;
 using game_service.models.DTOs;
 using game_service.repositories;
 using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 
 namespace game_service.services
 {
@@ -14,7 +15,8 @@ namespace game_service.services
 		public Task CreateGameAction(ProcessGameRequest request, Guid gameSessionId);
 		public Task<GameSession> GetGameSession(Guid gameSessionId);
 		public AbstractGame RestoreGame(GameData request);
-		public Task<object> MakeMove(AbstractGame game, Dictionary<string, object> data);
+		public GameActionResponse MakeMove(AbstractGame game, Dictionary<string, object> data);
+		public GameActionResponse CashOutEarly(AbstractGame game, Dictionary<string, object> data);
 	}
 
 	public class GameService : IGameService
@@ -51,41 +53,47 @@ namespace game_service.services
 			await _gameRepository.CreateGameAction(request, gameSessionId);
 		}
 
-		public object MakeMove(AbstractGame game, Dictionary<string, object> data)
+		public GameActionResponse MakeMove(AbstractGame game, Dictionary<string, object> data)
 		{
 			switch (game)
 			{
 				case PlinkoGame plinko:
 					{
 						plinko.CalculateDrop();
-						return new {
-							CurrentStatus = plinko.Status,
-							Position = plinko.FinalBallPosition,
-							Path = plinko.Path,
-							Multiplier = plinko.CurrentMultiplier
+						var dict = new Dictionary<string, object>();
+						dict["Position"] = plinko.FinalBallPosition;
+						dict["Path"] = plinko.Path;
+						return new GameActionResponse
+						{
+							Status = plinko.Status,
+							Multiplier = plinko.CurrentMultiplier,
+							Data = dict
+							
 						};
 					}
 				case MinesGame mines:
 					{
-
-						MinesPosition movePosition = new MinesPosition { X = (int)data["X"], Y = (int)data["Y"] };
-						mines.ValidateMove(movePosition);
-						var isOver = mines.IsGameOver();
-						var multi = mines.CalculateMultiplier();
+						var X = JsonSerializer.Deserialize<int>(data["X"].ToString());
+						var Y = JsonSerializer.Deserialize<int>(data["Y"].ToString());
+						MinesPosition movePosition = new MinesPosition { X = X, Y = Y };
+						var isOver = mines.ValidateMove(movePosition);
 						if (isOver) {
-							return new
+							var dict = new Dictionary<string, object>();
+							dict["Fields"] = mines.Field;
+							return new GameActionResponse
 							{
-								CurrentStatus = mines.Status,
-								Fields = mines.field
+								Status = mines.Status,
+								Data = dict
 							};
 						}
-						return new
+						return new GameActionResponse
 						{
-							CurrentStatus = mines.Status,
-							Multiplier = multi,
+							Status = mines.Status,
+							Multiplier = mines.CurrentMultiplier,
 						};
 					}
-				case ChickenGame chicken:
+				default: return null;
+/*				case ChickenGame chicken:
 					{
 						chicken.ValidateMove();
 						break;
@@ -93,7 +101,43 @@ namespace game_service.services
 				case BlackJackGame blackJack:
 					{
 
+					}*/
+			}
+		}
+
+		public GameActionResponse CashOutEarly(AbstractGame game, Dictionary<string, object> data)
+		{
+			switch (game)
+			{
+				case MinesGame mines:
+					{
+						mines.CashOutEarly = true;
+						mines.Status = GameStatus.EndedWin;
+						var dict = new Dictionary<string, object>();
+						dict["Fields"] = mines.Field;
+						dict["Result"] = mines.BetAmount*mines.CurrentMultiplier;
+						return new GameActionResponse
+						{
+							Status = mines.Status,
+							Multiplier = mines.CurrentMultiplier,
+							Data = dict
+						};
 					}
+				case ChickenGame chicken:
+					{
+						chicken.CashOutEarly = true;
+						chicken.Status = GameStatus.EndedWin;
+						var dict = new Dictionary<string, object>();
+						dict["Result"] = chicken.BetAmount * chicken.CurrentMultiplier;
+						return new GameActionResponse
+						{
+							Status = chicken.Status,
+							Multiplier = chicken.CurrentMultiplier,
+							Data = dict
+						};
+
+					}
+				default: return null;
 			}
 		}
 

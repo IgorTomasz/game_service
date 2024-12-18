@@ -1,6 +1,8 @@
 
 using game_service.classes;
 using game_service.context;
+using game_service.repositories;
+using game_service.services;
 using Microsoft.EntityFrameworkCore;
 
 namespace game_service
@@ -15,6 +17,8 @@ namespace game_service
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<GameDatabaseContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+            builder.Services.AddScoped<IGameRepository, GameRepository>();
+            builder.Services.AddScoped<IGameService, GameService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

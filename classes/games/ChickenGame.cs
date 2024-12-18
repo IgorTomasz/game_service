@@ -1,4 +1,5 @@
 ﻿
+
 namespace game_service.classes.games
 {
 	public class ChickenGame : AbstractGame
@@ -34,17 +35,22 @@ namespace game_service.classes.games
 			};
 		}
 
-		public decimal GetMultiplier()
+		public decimal GetCashWon()
 		{
-			throw new NotImplementedException();
+			return BetAmount*CurrentMultiplier;
 		}
 
-		public decimal GetResult()
+		public decimal GetMultiplier()
 		{
-			throw new NotImplementedException();
+			return CurrentMultiplier;
 		}
 
 		public GameStatus GetStatus()
+		{
+			return Status;
+		}
+
+		public void InicializeGame(Dictionary<string, object> gameSettings)
 		{
 			throw new NotImplementedException();
 		}

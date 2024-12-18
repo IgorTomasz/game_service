@@ -27,7 +27,6 @@ namespace game_service.repositories
 			GameSession gameSession = new GameSession
 			{
 				GameSessionId = Guid.NewGuid(),
-				GameId = game.GameId,
 				UserId = userId,
 				UserSessionId = userSessionId,
 				GameHistoryId = null,

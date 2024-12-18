@@ -1,4 +1,5 @@
 ﻿
+
 namespace game_service.classes.games
 {
 	public class DiceGame : AbstractGame
@@ -43,10 +44,19 @@ namespace game_service.classes.games
 			{
 				BetAmount = betAmount,
 				Status = GameStatus.InProgress,
-				GameId = Guid.NewGuid(),
 				CurrentMultiplier = 0,
 				Type = GameType.Dice
 			};
+		}
+
+		public decimal GetCashWon()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void InicializeGame(Dictionary<string, object> gameSettings)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

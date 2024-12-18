@@ -67,11 +67,16 @@ namespace game_service.models
 			switch (game)
 			{
 				case MinesGame mines:
-					data["field"] = mines.field; break;
+					data["Field"] = mines.Field;
+					data["MinesCount"] = mines.MinesCount;
+					data["DiscoveredDiamonds"] = mines.DiscoveredDiamonds; break;
 				case DiceGame dice:
 					break;
 				case PlinkoGame plinko:
-					break;
+					data["Rows"] = plinko.RowsCount;
+					data["Difficulty"] = plinko.ChoosenDifficulty;
+					data["FinalBallPosition"] = plinko.FinalBallPosition;
+					data["Path"] = plinko.Path; break;
 				case ChickenGame chicken:
 					break;
 				case BlackJackGame blackJack:
