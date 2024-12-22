@@ -17,6 +17,7 @@ namespace game_service.services
 		public AbstractGame RestoreGame(GameData request);
 		public GameActionResponse MakeMove(AbstractGame game, Dictionary<string, object> data);
 		public GameActionResponse CashOutEarly(AbstractGame game, Dictionary<string, object> data);
+		public Task SaveSession(GameSession gameSession);
 	}
 
 	public class GameService : IGameService
@@ -75,6 +76,7 @@ namespace game_service.services
 					{
 						var X = JsonSerializer.Deserialize<int>(data["X"].ToString());
 						var Y = JsonSerializer.Deserialize<int>(data["Y"].ToString());
+						
 						MinesPosition movePosition = new MinesPosition { X = X, Y = Y };
 						var isOver = mines.ValidateMove(movePosition);
 						if (isOver) {
@@ -139,6 +141,11 @@ namespace game_service.services
 					}
 				default: return null;
 			}
+		}
+
+		public async Task SaveSession(GameSession gameSession)
+		{
+			await _gameRepository.SaveSession(gameSession);
 		}
 
 

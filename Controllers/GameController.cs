@@ -63,6 +63,8 @@ namespace game_service.Controllers
                             Data = dict
 
                         }, session.GameSessionId);
+                        session.Game = game;
+                        await _gameService.SaveSession(session);
 						return Ok(new HttpResponseModel
                         {
                             Success = true,

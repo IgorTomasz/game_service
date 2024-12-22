@@ -40,13 +40,19 @@ namespace game_service.classes.games
 		public decimal CalculateMultiplier()
 		{
 			var diamonds = 25-MinesCount;
-			var multi = (((diamonds / MinesCount) + 1) + (((DiscoveredDiamonds / diamonds) * diamonds) / 2)) * 0.98;
-			return decimal.Parse(multi.ToString());
+			decimal decimalDiamonds = Decimal.Parse(diamonds.ToString());
+			decimal decimalDiscovered = Decimal.Parse(DiscoveredDiamonds.ToString());
+			decimal baseMulti = (MinesCount / decimalDiamonds) + 1.0m;
+			decimal discoveredPercentage = decimalDiscovered / decimalDiamonds;
+			decimal progressBoost = (discoveredPercentage * decimalDiscovered)/2.0m;
+			decimal multi = baseMulti + progressBoost;
+			decimal ret = multi * 0.98m;
+			return ret;
 		}
 
 		public bool IsGameOver(MinesPosition position)
 		{
-			var index = position.Y-1 * 5 + position.X;
+			var index = (position.Y-1) * 5 + position.X;
 			if(Field[index] == 0)
 			{
 				return true;
@@ -72,12 +78,13 @@ namespace game_service.classes.games
 
 		public bool ValidateMove(MinesPosition position)
 		{
+			CurrentMultiplier = CalculateMultiplier();
 			var isGameOver = IsGameOver(position);
 			if (!isGameOver)
 			{
-				CurrentMultiplier = CalculateMultiplier();
 				if(DiscoveredDiamonds == _fieldCount - MinesCount)
 				{
+					CurrentMultiplier = CalculateMultiplier();
 					Status = GameStatus.EndedWin;
 					return true;
 				}
@@ -90,25 +97,30 @@ namespace game_service.classes.games
 
 		public static AbstractGame RestoreGameData(GameData gameData)
 		{
-			return new MinesGame
+			var disc = JsonSerializer.Deserialize<int>(gameData.GamesValues["DiscoveredDiamonds"].ToString());
+			var field = JsonSerializer.Deserialize<int[]>(gameData.GamesValues["Field"].ToString());
+			var mines = JsonSerializer.Deserialize<int>(gameData.GamesValues["MinesCount"].ToString());
+			MinesGame game = new MinesGame
 			{
 				BetAmount = gameData.BetAmount,
 				CurrentMultiplier = gameData.CurrentMultiplier,
 				GameId = gameData.GameId,
 				Status = gameData.Status,
 				Type = gameData.GameType,
-				Field = JsonSerializer.Deserialize<int[]>(gameData.GamesValues["Field"].ToString()),
-				DiscoveredDiamonds =JsonSerializer.Deserialize<int>(gameData.GamesValues["DiscoveredDiamonds"].ToString()),
-				MinesCount = JsonSerializer.Deserialize<int>(gameData.GamesValues["MinesCount"].ToString())
+				Field = field,
+				DiscoveredDiamonds = disc,
+				MinesCount = mines
 			};
+			return game;
 		}
 
 		public static AbstractGame CreateGame(decimal betAmount)
 		{
+			Guid guid = Guid.NewGuid();
 			return new MinesGame
 			{
 				BetAmount = betAmount,
-				GameId = Guid.NewGuid(),
+				GameId = guid,
 				Status = GameStatus.InProgress,
 				Type = GameType.Mines,
 				CurrentMultiplier = 0

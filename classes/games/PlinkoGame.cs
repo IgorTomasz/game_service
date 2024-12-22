@@ -13,15 +13,16 @@ namespace game_service.classes.games
 
 	public class PlinkoGame : AbstractGame
 	{
-		public decimal BetAmount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public decimal CurrentMultiplier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public GameStatus Status { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public GameType Type { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public bool CashOutEarly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public decimal BetAmount { get; set; }
+		public decimal CurrentMultiplier { get; set; }
+		public GameStatus Status { get; set; }
+		public Guid GameId { get; set; }
+		public GameType Type { get; set; }
+		public bool CashOutEarly { get; set; }
 		public int RowsCount { get; set; }
 		public Difficulty ChoosenDifficulty { get; set; }
 		public double FinalBallPosition { get; set; }
-		public PlinkoPositions PlinkoPositions { get; set; }
+		public Dictionary<string, double[]> PlinkoPositions { get; set; }
 		public decimal[] MultipliersEasy = { 16, 9, 2, 1.4m, 1.4m,1.2m, 1.1m, 1, 0.5m, 1, 1.1m, 1.2m, 1.4m, 1.4m, 2, 9, 16 };
 		public decimal[] MultipliersMedium = { 110, 41, 10, 5, 3, 1.5m, 1m, 0.5m, 0.3m, 0.5m, 1, 1.5m, 3, 5, 10, 41, 110 };
 		public decimal[] MultipliersHard = { 1000, 130, 26, 9, 4, 2, 0.2m, 0.2m, 0.2m, 0.2m, 0.2m, 2, 4, 9, 26, 130, 1000 };
@@ -39,24 +40,36 @@ namespace game_service.classes.games
 
 		public static AbstractGame RestoreGameData(GameData gameData)
 		{
+			var ballPos = JsonSerializer.Deserialize<double>(gameData.GamesValues["FinalBallPosition"].ToString());
+			var path = JsonSerializer.Deserialize<char[]>(gameData.GamesValues["Path"].ToString());
+			
+			var rows = JsonSerializer.Deserialize<int>(gameData.GamesValues["Rows"].ToString());
+			var diff = JsonSerializer.Deserialize<Difficulty>(gameData.GamesValues["Difficulty"].ToString());
+			var file = File.ReadAllText("./classes/games/plinko_positions.json");
+			var plinkoPos = JsonSerializer.Deserialize<Dictionary<string, double[]>>(file);
 			return new PlinkoGame
 			{
 				BetAmount = gameData.BetAmount,
 				CurrentMultiplier = gameData.CurrentMultiplier,
 				Status = gameData.Status,
 				Type = gameData.GameType,
-				FinalBallPosition = (double)gameData.GamesValues["FinalBallPosition"],
-				Path = (char[])gameData.GamesValues["Path"]
+				FinalBallPosition = ballPos,
+				Path = path,
+				ChoosenDifficulty = diff,
+				RowsCount = rows,
+				PlinkoPositions = plinkoPos
 			};
 		}
 
 		public static AbstractGame CreateGame(decimal betAmount)
 		{
+			Guid guid = Guid.NewGuid();
 			return new PlinkoGame
 			{
 				BetAmount = betAmount,
 				Status = GameStatus.InProgress,
 				Type = GameType.Plinko,
+				GameId = guid,
 				CurrentMultiplier = 0
 			};
 		}
@@ -90,7 +103,7 @@ namespace game_service.classes.games
 			return Path;
 		}
 
-		public decimal CalculateMultiplier(char[] path)
+		public int CalculateMultiplier(char[] path)
 		{
 			decimal[] temp = new decimal[4];
 
@@ -108,15 +121,16 @@ namespace game_service.classes.games
 				if (i == 'L') index--;
 			}
 
-			return temp[index];
+			CurrentMultiplier = temp[index];
+			return index;
 		}
 
-		public double GetPosition(decimal multiplier)
+		public double GetPosition(int index)
 		{
-			double[] positions = PlinkoPositions.keyValuePairs[multiplier.ToString()];
+			double[] positions = PlinkoPositions[index.ToString()];
 			var rand = new Random();
-			var index = rand.Next(positions.Length);
-			return positions[index];
+			var indexPos = rand.Next(positions.Length);
+			return positions[indexPos];
 		}
 
 		//trzeba bedzie zmienic typ zwracany
@@ -126,14 +140,14 @@ namespace game_service.classes.games
 			var multiplier = CalculateMultiplier(path);
 			var position = GetPosition(multiplier);
 			FinalBallPosition = position;
-			CurrentMultiplier = multiplier;
+			
 		}
 
 		public void InicializeGame(Dictionary<string, object> gameSettings)
 		{
-			RowsCount = (int)gameSettings["Rows"];
-			ChoosenDifficulty = (Difficulty)gameSettings["Difficulty"];
-			PlinkoPositions = JsonSerializer.Deserialize<PlinkoPositions>(File.ReadAllText("./plinko_positions.json"));
+			RowsCount = JsonSerializer.Deserialize<int>(gameSettings["Rows"].ToString());
+			ChoosenDifficulty = JsonSerializer.Deserialize<Difficulty>(gameSettings["Difficulty"].ToString());
+			Path = new char[RowsCount];
 		}
 	}
 }

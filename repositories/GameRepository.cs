@@ -10,6 +10,7 @@ namespace game_service.repositories
 		public Task<Guid> CreateGameSession(AbstractGame game, Guid userId, Guid userSessionId);
 		public Task CreateGameAction(ProcessGameRequest request, Guid gameSessionId);
 		public Task<GameSession> GetGameSession(Guid gameSessionId);
+		public Task SaveSession(GameSession gameSession);
 	}
 
 	public class GameRepository : IGameRepository
@@ -67,6 +68,13 @@ namespace game_service.repositories
 		public async Task<GameSession> GetGameSession(Guid gameSessionId)
 		{
 			return await _context.GameSessions.FindAsync(gameSessionId);
+		}
+
+		public async Task SaveSession(GameSession gameSession)
+		{
+			var sess = await _context.GameSessions.FindAsync(gameSession.GameSessionId);
+			sess.Game = gameSession.Game;
+			await _context.SaveChangesAsync();
 		}
 	}
 }

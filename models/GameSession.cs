@@ -76,6 +76,7 @@ namespace game_service.models
 					data["Rows"] = plinko.RowsCount;
 					data["Difficulty"] = plinko.ChoosenDifficulty;
 					data["FinalBallPosition"] = plinko.FinalBallPosition;
+					data["PlinkoPositions"] = plinko.PlinkoPositions;
 					data["Path"] = plinko.Path; break;
 				case ChickenGame chicken:
 					break;
