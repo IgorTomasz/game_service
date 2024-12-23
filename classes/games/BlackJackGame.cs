@@ -4,12 +4,12 @@ namespace game_service.classes.games
 {
 	public class BlackJackGame : AbstractGame
 	{
-		public decimal BetAmount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public decimal CurrentMultiplier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public Guid GameId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public GameStatus Status { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public GameType Type { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		public bool CashOutEarly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public decimal BetAmount { get; set; }
+		public decimal CurrentMultiplier { get; set; }
+		public GameStatus Status { get; set; }
+		public Guid GameId { get; set; }
+		public GameType Type { get; set; }
+		public bool CashOutEarly { get; set; }
 
 		public decimal GetMultiplier()
 		{

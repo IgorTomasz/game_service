@@ -79,6 +79,8 @@ namespace game_service.models
 					data["PlinkoPositions"] = plinko.PlinkoPositions;
 					data["Path"] = plinko.Path; break;
 				case ChickenGame chicken:
+					data["RandomRoad"] = chicken.RandomRoad;
+					data["CurrentPosition"] = chicken.CurrentPosition;
 					break;
 				case BlackJackGame blackJack:
 					break;

@@ -69,14 +69,14 @@ namespace game_service.services
 							Status = plinko.Status,
 							Multiplier = plinko.CurrentMultiplier,
 							Data = dict
-							
+
 						};
 					}
 				case MinesGame mines:
 					{
 						var X = JsonSerializer.Deserialize<int>(data["X"].ToString());
 						var Y = JsonSerializer.Deserialize<int>(data["Y"].ToString());
-						
+
 						MinesPosition movePosition = new MinesPosition { X = X, Y = Y };
 						var isOver = mines.ValidateMove(movePosition);
 						if (isOver) {
@@ -94,16 +94,27 @@ namespace game_service.services
 							Multiplier = mines.CurrentMultiplier,
 						};
 					}
-				default: return null;
-/*				case ChickenGame chicken:
+				case ChickenGame chicken:
 					{
-						chicken.ValidateMove();
-						break;
+						var isGameOver = chicken.IsGameOver();
+						var dict = new Dictionary<string, object>();
+						dict["GameOver"] = isGameOver;
+						return new GameActionResponse
+						{
+							Status = chicken.Status,
+							Multiplier = chicken.CurrentMultiplier,
+							Data = dict
+						};
 					}
+				default: return null;
+			
+		
+/*
 				case BlackJackGame blackJack:
 					{
 
-					}*/
+					}
+*/
 			}
 		}
 
@@ -151,3 +162,4 @@ namespace game_service.services
 
 	}
 }
+
