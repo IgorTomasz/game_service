@@ -32,7 +32,17 @@ namespace game_service
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+			/**
+             * Authorization with gateway api by ip filtering
+             */
+			//app.UseMiddleware<IpFilteringMiddleware>();
+
+			/**
+             * Authorization with gateway api by secret key
+             */
+			//app.UseMiddleware<GatewayAuthenticationMiddleware>();
+
+			app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

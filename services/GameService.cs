@@ -1,4 +1,5 @@
-﻿using game_service.classes;
+﻿using Azure.Core;
+using game_service.classes;
 using game_service.classes.games;
 using game_service.models;
 using game_service.models.DTOs;
@@ -21,6 +22,8 @@ namespace game_service.services
 		public Task<List<Games>> GetGames();
 		public Task<List<Games>> GetGamesByCategory(int category);
 		public Task<Games> CreateGame(CreateGameRequest createGame);
+		public Task<bool> CheckIfGameEnded(Guid gameSessionId);
+		public Task<Guid> GetSessionForUser(UserSessionRequest request);
 	}
 
 	public class GameService : IGameService
@@ -68,9 +71,19 @@ namespace game_service.services
 			return await _gameRepository.GetGamesByCategory(gameCategory);
 		}
 
+		public async Task<bool> CheckIfGameEnded(Guid gameSessionId)
+		{
+			return await _gameRepository.CheckIfGameEnded(gameSessionId);
+		}
+
 		public async Task<Games> CreateGame(CreateGameRequest createGame)
 		{
 			return await _gameRepository.CreateGame(createGame);
+		}
+
+		public async Task<Guid> GetSessionForUser(UserSessionRequest request)
+		{
+			return await _gameRepository.GetSessionForUser(request);
 		}
 		public GameActionResponse MakeMove(AbstractGame game, Dictionary<string, object> data)
 		{

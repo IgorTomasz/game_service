@@ -2,6 +2,7 @@
 using game_service.context;
 using game_service.models;
 using game_service.models.DTOs;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace game_service.repositories
@@ -15,6 +16,8 @@ namespace game_service.repositories
 		public Task<List<Games>> GetGames();
 		public Task<List<Games>> GetGamesByCategory(GameCategory category);
 		public Task<Games> CreateGame(CreateGameRequest createGame);
+		public Task<bool> CheckIfGameEnded(Guid gameSessionId);
+		public Task<Guid> GetSessionForUser(UserSessionRequest request);
 	}
 
 	public class GameRepository : IGameRepository
@@ -77,6 +80,12 @@ namespace game_service.repositories
 		public async Task SaveSession(GameSession gameSession)
 		{
 			var sess = await _context.GameSessions.FindAsync(gameSession.GameSessionId);
+
+			if(sess.Status == GameStatus.EndedWin || sess.Status == GameStatus.EndedLose)
+			{
+				sess.EndTime = DateTime.UtcNow.AddHours(1);
+			}
+
 			sess.Game = gameSession.Game;
 			await _context.SaveChangesAsync();
 		}
@@ -89,6 +98,24 @@ namespace game_service.repositories
 		public async Task<List<Games>> GetGamesByCategory(GameCategory category)
 		{
 			return await _context.Games.Where(x => x.IsActive == true && x.GameCategory==category).ToListAsync();
+		}
+
+		public async Task<bool> CheckIfGameEnded(Guid gameSessionId)
+		{
+			var gameSession = await _context.GameSessions.Where(x => x.GameSessionId==gameSessionId).FirstOrDefaultAsync();
+			if (gameSession != null)
+			{
+				return gameSession.EndTime == null ? false : true;
+			}
+			
+			return false;
+
+		}
+
+		public async Task<Guid> GetSessionForUser(UserSessionRequest request)
+		{
+			var session = await _context.GameSessions.Where(x => x.UserId == request.UserId && x.UserSessionId == request.UserSessionId && x.GameType == request.GameType && x.EndTime == null).FirstOrDefaultAsync();
+			return session.GameSessionId;
 		}
 
 		public async Task<Games> CreateGame(CreateGameRequest createGame)

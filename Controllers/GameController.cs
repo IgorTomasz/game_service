@@ -27,14 +27,42 @@ namespace game_service.Controllers
         [HttpGet("games")]
         public async Task<IActionResult> GetAllGames()
         {
-            return Ok(await _gameService.GetGames());
+            return Ok(new GamesResponse
+            {
+                Success = true,
+                Games = await _gameService.GetGames()
+			});
         }
 
 		[HttpGet("games/{category}")]
 		public async Task<IActionResult> GetAllGames(int category)
 		{
-			return Ok(await _gameService.GetGamesByCategory(category));
+			return Ok(new GamesResponse
+			{
+                Success = true,
+                Games = await _gameService.GetGamesByCategory(category)
+			});
 		}
+
+        [HttpPost("getSession")]
+        public async Task<IActionResult> GetSessionForUser(UserSessionRequest request)
+        {
+            return Ok(new HttpResponseModel
+            {
+                Success = true,
+                Message = await _gameService.GetSessionForUser(request)
+            });
+        }
+
+        [HttpGet("games/ended/{gameSessionId}")]
+        public async Task<IActionResult> CheckIfGameEnded(Guid gameSessionId)
+        {
+            return Ok(new HttpResponseModel
+            {
+                Success = true,
+                Message = await _gameService.CheckIfGameEnded(gameSessionId)
+            });
+        }
 
 		[HttpPost("process")]
         public async Task<IActionResult> ProcessGame(ProcessGameRequest startGame)
