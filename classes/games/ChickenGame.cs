@@ -13,14 +13,14 @@ namespace game_service.classes.games
 		public Guid GameId { get; set; }
 		public GameType Type { get; set; }
 		public bool CashOutEarly { get; set; }
-		public int RandomRoad {  get; set; }
-		public int CurrentPosition { get; set; }
-		public decimal[] Multipliers = {1.04m, 1.09m,1.14m,1.2m,1.26m,1.33m,1.41m,1.5m,1.6m,1.71m,1.85m,2,2.18m,2.4m,2.67m,3,3.43m,4,4.8m,6,8,12,24};
+		private int RandomRoad {  get; set; }
+		private int CurrentPosition { get; set; }
+		private decimal[] Multipliers = {1.04m, 1.09m,1.14m,1.2m,1.26m,1.33m,1.41m,1.5m,1.6m,1.71m,1.85m,2,2.18m,2.4m,2.67m,3,3.43m,4,4.8m,6,8,12,24};
 
 		public static AbstractGame CreateGame(decimal betAmount)
 		{
 			Guid guid = Guid.NewGuid();
-			return new ChickenGame
+			ChickenGame game = new ChickenGame
 			{
 				BetAmount = betAmount,
 				Status = GameStatus.InProgress,
@@ -30,6 +30,7 @@ namespace game_service.classes.games
 				CurrentPosition = 0,
 				RandomRoad = 0
 			};
+			return game;
 		}
 
 		public static AbstractGame RestoreGameData(GameData gameData)
@@ -48,20 +49,15 @@ namespace game_service.classes.games
 			};
 		}
 
-		public decimal GetCashWon()
-		{
-			return BetAmount*CurrentMultiplier;
-		}
+		public decimal GetCashWon() { return BetAmount*CurrentMultiplier; }
 
-		public decimal GetMultiplier()
-		{
-			return CurrentMultiplier;
-		}
+		public decimal GetMultiplier() { return CurrentMultiplier; }
 
-		public GameStatus GetStatus()
-		{
-			return Status;
-		}
+		public GameStatus GetStatus() { return Status; }
+
+		public int GetRandomRoad() { return RandomRoad; }
+
+		public int GetCurrentPosition() {  return CurrentPosition; }
 
 		public bool IsGameOver()
 		{
@@ -88,6 +84,17 @@ namespace game_service.classes.games
 			rng.GetBytes(bytes);
 			var random = BitConverter.ToInt32(bytes, 0);
 			RandomRoad = Math.Abs(random%24)+1;
+		}
+
+		public void CashOut()
+		{
+			Status = GameStatus.EndedWin;
+			CashOutEarly = true;
+		}
+
+		public Guid GetGameId()
+		{
+			return GameId;
 		}
 	}
 }

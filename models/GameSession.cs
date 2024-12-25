@@ -45,6 +45,7 @@ namespace game_service.models
 			{
 				GameType = this.GameType,
 				BetAmount = game.BetAmount,
+				GameId = game.GetGameId(),
 				CurrentMultiplier = game.CurrentMultiplier,
 				Status = game.Status,
 				GamesValues = GetGameValues(game),
@@ -67,22 +68,33 @@ namespace game_service.models
 			switch (game)
 			{
 				case MinesGame mines:
-					data["Field"] = mines.Field;
-					data["MinesCount"] = mines.MinesCount;
-					data["DiscoveredDiamonds"] = mines.DiscoveredDiamonds; break;
+					data["Field"] = mines.GetField();
+					data["MinesCount"] = mines.GetMinesCount();
+					data["DiscoveredDiamonds"] = mines.GetDiscoveredDiamonds(); break;
 				case DiceGame dice:
+					data["DiceSum"] = dice.GetDiceSum();
+					data["BettedSum"] = dice.GetBettedSum();
 					break;
 				case PlinkoGame plinko:
-					data["Rows"] = plinko.RowsCount;
-					data["Difficulty"] = plinko.ChoosenDifficulty;
-					data["FinalBallPosition"] = plinko.FinalBallPosition;
-					data["PlinkoPositions"] = plinko.PlinkoPositions;
-					data["Path"] = plinko.Path; break;
+					data["Rows"] = plinko.GetRowsCount();
+					data["Difficulty"] = plinko.GetChoosenDifficulty();
+					data["FinalBallPosition"] = plinko.GetBallPosition();
+					data["PlinkoPositions"] = plinko.GetPlinkoPositions();
+					data["Path"] = plinko.GetPath(); break;
 				case ChickenGame chicken:
-					data["RandomRoad"] = chicken.RandomRoad;
-					data["CurrentPosition"] = chicken.CurrentPosition;
+					data["RandomRoad"] = chicken.GetRandomRoad();
+					data["CurrentPosition"] = chicken.GetCurrentPosition();
 					break;
 				case BlackJackGame blackJack:
+					data["DealerHand"] = blackJack.GetDealerHand();
+					data["DealerSum"] = blackJack.GetDealerSum();
+					data["DealerAceSum"] = blackJack.GetDealerAceSum();
+					data["DealerHiddenCard"] = blackJack.GetDealerHidden();
+					data["PlayerHand"] = blackJack.GetPlayerHand();
+					data["PlayerSum"] = blackJack.GetPlayerSum();
+					data["PlayerAceSum"] = blackJack.GetPlayerAceSum();
+					data["Cards"] = blackJack.GetCards();
+					data["DealerSumWithHidden"] = blackJack.GetDealerSumWithHidden();
 					break;
 			}
 

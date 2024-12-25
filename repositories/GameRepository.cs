@@ -2,6 +2,7 @@
 using game_service.context;
 using game_service.models;
 using game_service.models.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace game_service.repositories
 {
@@ -11,6 +12,9 @@ namespace game_service.repositories
 		public Task CreateGameAction(ProcessGameRequest request, Guid gameSessionId);
 		public Task<GameSession> GetGameSession(Guid gameSessionId);
 		public Task SaveSession(GameSession gameSession);
+		public Task<List<Games>> GetGames();
+		public Task<List<Games>> GetGamesByCategory(GameCategory category);
+		public Task<Games> CreateGame(CreateGameRequest createGame);
 	}
 
 	public class GameRepository : IGameRepository
@@ -75,6 +79,32 @@ namespace game_service.repositories
 			var sess = await _context.GameSessions.FindAsync(gameSession.GameSessionId);
 			sess.Game = gameSession.Game;
 			await _context.SaveChangesAsync();
+		}
+
+		public async Task<List<Games>> GetGames()
+		{
+			return await _context.Games.Where(x => x.IsActive==true).ToListAsync();
+		}
+
+		public async Task<List<Games>> GetGamesByCategory(GameCategory category)
+		{
+			return await _context.Games.Where(x => x.IsActive == true && x.GameCategory==category).ToListAsync();
+		}
+
+		public async Task<Games> CreateGame(CreateGameRequest createGame)
+		{
+			var game = new Games
+			{
+				GameName = createGame.GameName,
+				GameAdditionalFields = createGame.GameAdditionalFields,
+				GameDescription = createGame.GameDescription,
+				GameCategory = createGame.GameCategory,
+				IsActive = createGame.IsActive,
+			};
+
+			await _context.Games.AddAsync(game);
+			await _context.SaveChangesAsync();
+			return game;
 		}
 	}
 }

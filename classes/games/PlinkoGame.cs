@@ -19,14 +19,14 @@ namespace game_service.classes.games
 		public Guid GameId { get; set; }
 		public GameType Type { get; set; }
 		public bool CashOutEarly { get; set; }
-		public int RowsCount { get; set; }
-		public Difficulty ChoosenDifficulty { get; set; }
-		public double FinalBallPosition { get; set; }
-		public Dictionary<string, double[]> PlinkoPositions { get; set; }
-		public decimal[] MultipliersEasy = { 16, 9, 2, 1.4m, 1.4m,1.2m, 1.1m, 1, 0.5m, 1, 1.1m, 1.2m, 1.4m, 1.4m, 2, 9, 16 };
-		public decimal[] MultipliersMedium = { 110, 41, 10, 5, 3, 1.5m, 1m, 0.5m, 0.3m, 0.5m, 1, 1.5m, 3, 5, 10, 41, 110 };
-		public decimal[] MultipliersHard = { 1000, 130, 26, 9, 4, 2, 0.2m, 0.2m, 0.2m, 0.2m, 0.2m, 2, 4, 9, 26, 130, 1000 };
-		public char[] Path { get; set; }
+		private int RowsCount { get; set; }
+		private Difficulty ChoosenDifficulty { get; set; }
+		private double FinalBallPosition { get; set; }
+		private Dictionary<string, double[]> PlinkoPositions { get; set; }
+		private decimal[] MultipliersEasy = { 16, 9, 2, 1.4m, 1.4m,1.2m, 1.1m, 1, 0.5m, 1, 1.1m, 1.2m, 1.4m, 1.4m, 2, 9, 16 };
+		private decimal[] MultipliersMedium = { 110, 41, 10, 5, 3, 1.5m, 1m, 0.5m, 0.3m, 0.5m, 1, 1.5m, 3, 5, 10, 41, 110 };
+		private decimal[] MultipliersHard = { 1000, 130, 26, 9, 4, 2, 0.2m, 0.2m, 0.2m, 0.2m, 0.2m, 2, 4, 9, 26, 130, 1000 };
+		private char[] Path { get; set; }
 
 		public decimal GetMultiplier()
 		{
@@ -36,6 +36,31 @@ namespace game_service.classes.games
 		public GameStatus GetStatus()
 		{
 			return Status;
+		}
+
+		public char[] GetPath()
+		{
+			return Path;
+		}
+
+		public double GetBallPosition()
+		{
+			return FinalBallPosition;
+		}
+
+		public Dictionary<string, double[]> GetPlinkoPositions()
+		{
+			return PlinkoPositions;
+		}
+
+		public Difficulty GetChoosenDifficulty()
+		{
+			return ChoosenDifficulty;
+		}
+
+		public int GetRowsCount()
+		{
+			return RowsCount;
 		}
 
 		public static AbstractGame RestoreGameData(GameData gameData)
@@ -64,7 +89,7 @@ namespace game_service.classes.games
 		public static AbstractGame CreateGame(decimal betAmount)
 		{
 			Guid guid = Guid.NewGuid();
-			return new PlinkoGame
+			PlinkoGame game = new PlinkoGame
 			{
 				BetAmount = betAmount,
 				Status = GameStatus.InProgress,
@@ -72,6 +97,7 @@ namespace game_service.classes.games
 				GameId = guid,
 				CurrentMultiplier = 0
 			};
+			return game;
 		}
 
 		public decimal GetCashWon()
@@ -79,7 +105,7 @@ namespace game_service.classes.games
 			return CurrentMultiplier * BetAmount;
 		}
 
-		public char[] CalculatePath()
+		private char[] CalculatePath()
 		{
 			var rng = RandomNumberGenerator.Create();
 			
@@ -103,7 +129,7 @@ namespace game_service.classes.games
 			return Path;
 		}
 
-		public int CalculateMultiplier(char[] path)
+		private int CalculateMultiplier(char[] path)
 		{
 			decimal[] temp = new decimal[4];
 
@@ -125,7 +151,7 @@ namespace game_service.classes.games
 			return index;
 		}
 
-		public double GetPosition(int index)
+		private double GetPosition(int index)
 		{
 			double[] positions = PlinkoPositions[index.ToString()];
 			var rand = new Random();
@@ -148,6 +174,16 @@ namespace game_service.classes.games
 			RowsCount = JsonSerializer.Deserialize<int>(gameSettings["Rows"].ToString());
 			ChoosenDifficulty = JsonSerializer.Deserialize<Difficulty>(gameSettings["Difficulty"].ToString());
 			Path = new char[RowsCount];
+		}
+
+		public void CashOut()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Guid GetGameId()
+		{
+			return GameId;
 		}
 	}
 }

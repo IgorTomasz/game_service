@@ -17,7 +17,26 @@ namespace game_service.Controllers
             _gameService = gameService;
         }
 
-        [HttpPost("process")]
+        [HttpPost("addGame")]
+        public async Task<IActionResult> CreateGame(CreateGameRequest createGame)
+        {
+            var game = await _gameService.CreateGame(createGame);
+            return Created("",game);
+        }
+
+        [HttpGet("games")]
+        public async Task<IActionResult> GetAllGames()
+        {
+            return Ok(await _gameService.GetGames());
+        }
+
+		[HttpGet("games/{category}")]
+		public async Task<IActionResult> GetAllGames(int category)
+		{
+			return Ok(await _gameService.GetGamesByCategory(category));
+		}
+
+		[HttpPost("process")]
         public async Task<IActionResult> ProcessGame(ProcessGameRequest startGame)
         {
             switch (startGame.Action)
@@ -40,6 +59,16 @@ namespace game_service.Controllers
                         GameSession session = await _gameService.GetGameSession((Guid)startGame.GameSessionId);
                         AbstractGame game = session.Game;
                         var resp = _gameService.MakeMove(game, startGame.Data);
+
+                        if(resp == null)
+                        {
+                            return BadRequest(new HttpResponseModel
+                            {
+                                Success = false,
+                                Error = "Something went wrong while making move"
+                            });
+                        }
+
 						await _gameService.CreateGameAction(startGame, session.GameSessionId);
                         var dict = new Dictionary<string, object>();
                         dict["Status"] = resp.Status;
@@ -107,7 +136,7 @@ namespace game_service.Controllers
 						Success = false,
 						Error = "No action type was given"
 					});
-					//case ActionType.System: break;
+				
 			}
         }
 

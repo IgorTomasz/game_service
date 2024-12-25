@@ -12,6 +12,7 @@ namespace game_service.context
 		public DbSet<GameSession> GameSessions { get; set; }
 		public DbSet<GameAction> GameActions { get; set; }
 		public DbSet<GameHistory> GameHistory { get; set; }
+		public DbSet<Games> Games { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -19,6 +20,10 @@ namespace game_service.context
 			modelBuilder.Entity<GameAction>().Property(e => e.ActionData).HasColumnType("nvarchar(max)").HasConversion(
 				c => JsonSerializer.Serialize(c, (JsonSerializerOptions)null),
 				c => JsonSerializer.Deserialize<Dictionary<string, object>>(c, (JsonSerializerOptions)null));
+
+			modelBuilder.Entity<Games>().Property(e => e.GameAdditionalFields).HasColumnType("nvarchar(max)").HasConversion(
+				c => JsonSerializer.Serialize(c, (JsonSerializerOptions)null),
+				c => JsonSerializer.Deserialize<Dictionary<string, string>>(c, (JsonSerializerOptions)null));
 
 			modelBuilder.Entity<GameSession>().Property(e => e.SerializedGame).HasColumnType("nvarchar(max)");
 		}

@@ -9,13 +9,16 @@ namespace game_service.classes
 		public GameStatus Status { get; set; }
 		public GameType Type { get; set; }
 		public bool CashOutEarly { get; set; }
+		public Guid GameId { get; set; }
 
 		public decimal GetMultiplier();
 		public decimal GetCashWon();
+		public Guid GetGameId();
 		public GameStatus GetStatus();
 		public static abstract AbstractGame RestoreGameData(GameData gameData);
 		public static abstract AbstractGame CreateGame(decimal betAmount);
 		public void InicializeGame(Dictionary<string, object> gameSettings);
+		public void CashOut();
 
 	}
 

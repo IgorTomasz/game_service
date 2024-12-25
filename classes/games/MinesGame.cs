@@ -17,10 +17,10 @@ namespace game_service.classes.games
 		public GameType Type { get; set; }
 		public bool CashOutEarly { get; set; }
 
-		public int[] Field = new int[25];
-		public int MinesCount { get; set; }
-		public int DiscoveredDiamonds { get; set; }
-		public int _fieldCount = 25;
+		private int[] Field = new int[25];
+		private int MinesCount { get; set; }
+		private int DiscoveredDiamonds { get; set; }
+		private int _fieldCount = 25;
 
 		public decimal GetMultiplier()
 		{
@@ -37,7 +37,22 @@ namespace game_service.classes.games
 			return Status;
 		}
 
-		public decimal CalculateMultiplier()
+		public int[] GetField()
+		{
+			return Field;
+		}
+
+		public int GetMinesCount()
+		{
+			return MinesCount;
+		}
+
+		public int GetDiscoveredDiamonds()
+		{
+			return DiscoveredDiamonds;
+		}
+
+		private decimal CalculateMultiplier()
 		{
 			var diamonds = 25-MinesCount;
 			decimal decimalDiamonds = Decimal.Parse(diamonds.ToString());
@@ -50,7 +65,7 @@ namespace game_service.classes.games
 			return ret;
 		}
 
-		public bool IsGameOver(MinesPosition position)
+		private bool IsGameOver(MinesPosition position)
 		{
 			var index = (position.Y-1) * 5 + position.X;
 			if(Field[index] == 0)
@@ -61,7 +76,7 @@ namespace game_service.classes.games
 			return false;
 		}
 
-		public void PlaceMines(int minesCount)
+		private void PlaceMines(int minesCount)
 		{
 			for (int i = 0; i < minesCount; i++)
 			{
@@ -117,7 +132,7 @@ namespace game_service.classes.games
 		public static AbstractGame CreateGame(decimal betAmount)
 		{
 			Guid guid = Guid.NewGuid();
-			return new MinesGame
+			MinesGame game = new MinesGame
 			{
 				BetAmount = betAmount,
 				GameId = guid,
@@ -125,6 +140,7 @@ namespace game_service.classes.games
 				Type = GameType.Mines,
 				CurrentMultiplier = 0
 			};
+			return game;
 
 	}
 
@@ -132,6 +148,17 @@ namespace game_service.classes.games
 		{
 			MinesCount = JsonSerializer.Deserialize<int>(gameSettings["MinesCount"].ToString());
 			PlaceMines(MinesCount);
+		}
+
+		public void CashOut()
+		{
+			Status = GameStatus.EndedWin;
+			CashOutEarly = true;
+		}
+
+		public Guid GetGameId()
+		{
+			return GameId;
 		}
 	}
 }
