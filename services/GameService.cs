@@ -24,6 +24,7 @@ namespace game_service.services
 		public Task<Games> CreateGame(CreateGameRequest createGame);
 		public Task<bool> CheckIfGameEnded(Guid gameSessionId);
 		public Task<Guid> GetSessionForUser(UserSessionRequest request);
+		public Task CreateGameHistoryRecord(GameSession gameSession);
 	}
 
 	public class GameService : IGameService
@@ -85,6 +86,12 @@ namespace game_service.services
 		{
 			return await _gameRepository.GetSessionForUser(request);
 		}
+
+		public async Task CreateGameHistoryRecord(GameSession gameSession)
+		{
+			await _gameRepository.CreateGameHistoryRecord(gameSession);
+		}
+
 		public GameActionResponse MakeMove(AbstractGame game, Dictionary<string, object> data)
 		{
 			switch (game)
@@ -99,6 +106,7 @@ namespace game_service.services
 						{
 							Status = plinko.GetStatus(),
 							Multiplier = plinko.GetMultiplier(),
+							Result = plinko.GetWinnedAmount(),
 							Data = dict
 
 						};
@@ -123,6 +131,7 @@ namespace game_service.services
 						{
 							Status = mines.GetStatus(),
 							Multiplier = mines.GetMultiplier(),
+							Result = mines.GetWinnedAmount(),
 						};
 					}
 				case ChickenGame chicken:
@@ -134,6 +143,7 @@ namespace game_service.services
 						{
 							Status = chicken.GetStatus(),
 							Multiplier = chicken.GetMultiplier(),
+							Result = chicken.GetWinnedAmount(),
 							Data = dict
 						};
 					}
@@ -146,6 +156,7 @@ namespace game_service.services
 						{
 							Status = dice.GetStatus(),
 							Multiplier = dice.GetMultiplier(),
+							Result = dice.GetWinnedAmount(),
 							Data = dict
 						};
 					}
@@ -172,6 +183,7 @@ namespace game_service.services
 									{
 										Status = blackJack.GetStatus(),
 										Multiplier = blackJack.GetMultiplier(),
+										Result = blackJack.GetWinnedAmount(),
 										Data = dict
 									};
 								}
@@ -197,6 +209,7 @@ namespace game_service.services
 						{
 							Status = blackJack.GetStatus(),
 							Multiplier = blackJack.GetMultiplier(),
+							Result= blackJack.GetWinnedAmount(),
 							Data = dict
 						};
 					}

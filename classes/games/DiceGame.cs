@@ -115,6 +115,11 @@ namespace game_service.classes.games
 			return BettedSum;
 		}
 
+		public decimal GetWinnedAmount()
+		{
+			return CurrentMultiplier * BetAmount;
+		}
+
 		public void InicializeGame(Dictionary<string, object> gameSettings)
 		{
 			BettedSum = JsonSerializer.Deserialize<int>(gameSettings["BettedSum"].ToString());

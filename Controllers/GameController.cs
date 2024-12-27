@@ -73,6 +73,7 @@ namespace game_service.Controllers
                     {
                         AbstractGame game = _gameService.GetGame(startGame);
                         game.InicializeGame(startGame.Data);
+                        //dodac sprawdzenie aktywnych gameSession i zakonczyc
                         Guid sessionId = await _gameService.CreateGameSession(game, startGame.UserId, startGame.UserSessionId);
                         await _gameService.CreateGameAction(startGame, sessionId);
 
@@ -122,6 +123,12 @@ namespace game_service.Controllers
                         }, session.GameSessionId);
                         session.Game = game;
                         await _gameService.SaveSession(session);
+
+                        if(resp.Status==GameStatus.EndedLose || resp.Status == GameStatus.EndedWin)
+                        {
+                            await _gameService.CreateGameHistoryRecord(session);
+                        }
+
 						return Ok(new HttpResponseModel
                         {
                             Success = true,
@@ -134,6 +141,7 @@ namespace game_service.Controllers
 						AbstractGame game = session.Game;
 						await _gameService.CreateGameAction(startGame, session.GameSessionId);
 						var resp = _gameService.CashOutEarly(game, startGame.Data);
+						await _gameService.CreateGameHistoryRecord(session);
 						var dict = new Dictionary<string, object>();
 						dict["Status"] = resp.Status;
 						dict["Multiplier"] = resp.Multiplier;

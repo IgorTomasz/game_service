@@ -185,5 +185,10 @@ namespace game_service.classes.games
 		{
 			return GameId;
 		}
+
+		public decimal GetWinnedAmount()
+		{
+			return CurrentMultiplier*BetAmount;
+		}
 	}
 }

@@ -15,6 +15,7 @@ namespace game_service.classes
 		public decimal GetCashWon();
 		public Guid GetGameId();
 		public GameStatus GetStatus();
+		public decimal GetWinnedAmount();
 		public static abstract AbstractGame RestoreGameData(GameData gameData);
 		public static abstract AbstractGame CreateGame(decimal betAmount);
 		public void InicializeGame(Dictionary<string, object> gameSettings);

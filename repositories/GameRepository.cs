@@ -18,6 +18,7 @@ namespace game_service.repositories
 		public Task<Games> CreateGame(CreateGameRequest createGame);
 		public Task<bool> CheckIfGameEnded(Guid gameSessionId);
 		public Task<Guid> GetSessionForUser(UserSessionRequest request);
+		public Task CreateGameHistoryRecord(GameSession gameSession);
 	}
 
 	public class GameRepository : IGameRepository
@@ -84,6 +85,7 @@ namespace game_service.repositories
 			if(sess.Status == GameStatus.EndedWin || sess.Status == GameStatus.EndedLose)
 			{
 				sess.EndTime = DateTime.UtcNow.AddHours(1);
+				sess.CashWon = sess.BetAmount*sess.CurrentMultiplier;
 			}
 
 			sess.Game = gameSession.Game;
@@ -110,6 +112,23 @@ namespace game_service.repositories
 			
 			return false;
 
+		}
+
+		public async Task CreateGameHistoryRecord(GameSession gameSession)
+		{
+			Guid guid = Guid.NewGuid();
+			GameHistory gameHistory = new GameHistory
+			{
+				GameHistoryId = guid,
+				GameSessionId = gameSession.GameSessionId,
+				UserId = gameSession.UserId,
+				MaxMultiplier = gameSession.CurrentMultiplier,
+				Result = gameSession.CashWon,
+				BetAmount = gameSession.BetAmount,
+				Timestamp = DateTime.UtcNow.AddHours(1)
+			};
+			await _context.GameHistory.AddAsync(gameHistory);
+			await _context.SaveChangesAsync();
 		}
 
 		public async Task<Guid> GetSessionForUser(UserSessionRequest request)
