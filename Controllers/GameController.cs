@@ -122,6 +122,9 @@ namespace game_service.Controllers
 
                         }, session.GameSessionId);
                         session.Game = game;
+                        session.CurrentMultiplier = resp.Multiplier;
+                        session.Result = resp.Status == GameStatus.EndedWin ? ResultType.Won : ResultType.Lost;
+                        session.CashWon = resp.Result;
                         await _gameService.SaveSession(session);
 
                         if(resp.Status==GameStatus.EndedLose || resp.Status == GameStatus.EndedWin)
