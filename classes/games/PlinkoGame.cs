@@ -166,7 +166,7 @@ namespace game_service.classes.games
 			var multiplier = CalculateMultiplier(path);
 			var position = GetPosition(multiplier);
 			FinalBallPosition = position;
-			
+			Status = GameStatus.EndedWin;
 		}
 
 		public void InicializeGame(Dictionary<string, object> gameSettings)
