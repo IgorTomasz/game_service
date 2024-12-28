@@ -91,7 +91,7 @@ namespace game_service.Controllers
 
                         if(resp == null)
                         {
-                            return BadRequest(new HttpResponseModel
+                            return Ok(new HttpResponseModel
                             {
                                 Success = false,
                                 Error = "Something went wrong while making move"
