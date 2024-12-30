@@ -165,7 +165,9 @@ namespace game_service.Controllers
 							session.CurrentMultiplier = game.GetMultiplier();
 							session.Result = game.GetStatus() == GameStatus.InProgress ? null : game.GetStatus() == GameStatus.EndedLose ? ResultType.Lost : ResultType.Won;
 							session.CashWon = game.GetCashWon();
-							await _gameService.SaveSession(session);
+                            session.Status = game.GetStatus();
+                            await _gameService.SaveSession(session);
+
 						}
 						await _gameService.CreateGameHistoryRecord(session);
 						var dict = new Dictionary<string, object>();
