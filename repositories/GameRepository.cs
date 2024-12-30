@@ -34,9 +34,10 @@ namespace game_service.repositories
 
 		public async Task<Guid> CreateGameSession(AbstractGame game, Guid userId, Guid userSessionId)
 		{
+			Guid guid = Guid.NewGuid();
 			GameSession gameSession = new GameSession
 			{
-				GameSessionId = Guid.NewGuid(),
+				GameSessionId = guid,
 				UserId = userId,
 				UserSessionId = userSessionId,
 				GameHistoryId = null,
@@ -46,8 +47,8 @@ namespace game_service.repositories
 				CashWon = 0,
 				StartTime = DateTime.UtcNow.AddHours(1),
 				EndTime = null,
-				Status = game.Status,
-				CurrentMultiplier = game.CurrentMultiplier,
+				Status = game.GetStatus(),
+				CurrentMultiplier = game.GetMultiplier(),
 				CashedOutEarly = game.CashOutEarly,
 				Game = game,
 			};
@@ -86,7 +87,7 @@ namespace game_service.repositories
 			if(sess.Status == GameStatus.EndedWin || sess.Status == GameStatus.EndedLose)
 			{
 				sess.EndTime = DateTime.UtcNow.AddHours(1);
-				sess.CashWon = sess.BetAmount*sess.CurrentMultiplier;
+				sess.CashWon = sess.Status == GameStatus.EndedLose ? 0 :gameSession.Game.GetCashWon();
 			}
 
 			sess.Game = gameSession.Game;
@@ -124,7 +125,7 @@ namespace game_service.repositories
 				GameSessionId = gameSession.GameSessionId,
 				UserId = gameSession.UserId,
 				MaxMultiplier = gameSession.CurrentMultiplier,
-				Result = gameSession.CashWon,
+				Result = gameSession.Status == GameStatus.EndedLose ? 0 : gameSession.CashWon,
 				BetAmount = gameSession.BetAmount,
 				Timestamp = DateTime.UtcNow.AddHours(1)
 			};

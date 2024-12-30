@@ -54,10 +54,11 @@ namespace game_service.classes.games
 
 		private decimal CalculateMultiplier()
 		{
-			var diamonds = 25-MinesCount;
+			var diamonds = _fieldCount-MinesCount;
 			decimal decimalDiamonds = Decimal.Parse(diamonds.ToString());
 			decimal decimalDiscovered = Decimal.Parse(DiscoveredDiamonds.ToString());
-			decimal baseMulti = (MinesCount / decimalDiamonds) + 1.0m;
+			decimal decimalMinesCount = Decimal.Parse(MinesCount.ToString());
+			decimal baseMulti = (decimalMinesCount / decimalDiamonds) + 1.0m;
 			decimal discoveredPercentage = decimalDiscovered / decimalDiamonds;
 			decimal progressBoost = (discoveredPercentage * decimalDiscovered)/2.0m;
 			decimal multi = baseMulti + progressBoost;
@@ -67,7 +68,7 @@ namespace game_service.classes.games
 
 		private bool IsGameOver(MinesPosition position)
 		{
-			var index = (position.Y-1) * 5 + position.X;
+			var index = position.Y * 5 + position.X;
 			if(Field[index] == 0)
 			{
 				return true;

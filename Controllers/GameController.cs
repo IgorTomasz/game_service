@@ -136,15 +136,18 @@ namespace game_service.Controllers
 
                         }, session.GameSessionId);
                         session.Game = game;
-                        session.CurrentMultiplier = resp.Message.Multiplier;
-                        session.Result = resp.Message.Status == GameStatus.EndedWin ? ResultType.Won : ResultType.Lost;
-                        session.CashWon = resp.Message.Result;
-                        await _gameService.SaveSession(session);
+                        session.CurrentMultiplier = game.GetMultiplier();
+                        session.Result = game.GetStatus() == GameStatus.InProgress ? null : game.GetStatus() == GameStatus.EndedLose ? ResultType.Lost : ResultType.Won;
+                        session.CashWon = game.GetCashWon();
+                        
 
                         if(resp.Message.Status==GameStatus.EndedLose || resp.Message.Status == GameStatus.EndedWin)
                         {
+                            session.EndTime = DateTime.Now.AddHours(1);
                             await _gameService.CreateGameHistoryRecord(session);
                         }
+
+						await _gameService.SaveSession(session);
 
 						return Ok(resp);
                     }
@@ -154,6 +157,16 @@ namespace game_service.Controllers
 						AbstractGame game = session.Game;
 						await _gameService.CreateGameAction(startGame, session.GameSessionId);
 						var resp = _gameService.CashOutEarly(game, startGame.Data);
+                        if (resp.Success)
+                        {
+                            session.CashedOutEarly = true;
+                            session.EndTime = DateTime.UtcNow.AddHours(1);
+							session.Game = game;
+							session.CurrentMultiplier = game.GetMultiplier();
+							session.Result = game.GetStatus() == GameStatus.InProgress ? null : game.GetStatus() == GameStatus.EndedLose ? ResultType.Lost : ResultType.Won;
+							session.CashWon = game.GetCashWon();
+							await _gameService.SaveSession(session);
+						}
 						await _gameService.CreateGameHistoryRecord(session);
 						var dict = new Dictionary<string, object>();
 						dict["Status"] = resp.Message.Status;

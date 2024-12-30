@@ -46,8 +46,8 @@ namespace game_service.models
 				GameType = this.GameType,
 				BetAmount = game.BetAmount,
 				GameId = game.GetGameId(),
-				CurrentMultiplier = game.CurrentMultiplier,
-				Status = game.Status,
+				CurrentMultiplier = game.GetMultiplier(),
+				Status = game.GetStatus(),
 				GamesValues = GetGameValues(game),
 			};
 
