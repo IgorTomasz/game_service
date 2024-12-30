@@ -19,6 +19,7 @@ namespace game_service.repositories
 		public Task<bool> CheckIfGameEnded(Guid gameSessionId);
 		public Task<Guid> GetSessionForUser(UserSessionRequest request);
 		public Task CreateGameHistoryRecord(GameSession gameSession);
+		public Task UpdateIsGameActive(AdminGameChangeActiveRequest request);
 	}
 
 	public class GameRepository : IGameRepository
@@ -151,6 +152,16 @@ namespace game_service.repositories
 			await _context.Games.AddAsync(game);
 			await _context.SaveChangesAsync();
 			return game;
+		}
+
+		public async Task UpdateIsGameActive(AdminGameChangeActiveRequest request)
+		{
+			foreach (var item in request.gameActives)
+			{
+				var game = await _context.Games.FindAsync(item.GameId);
+				game.IsActive = item.IsActive;
+				await _context.SaveChangesAsync();
+			}
 		}
 	}
 }

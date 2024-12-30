@@ -47,20 +47,34 @@ namespace game_service.Controllers
         [HttpPost("getSession")]
         public async Task<IActionResult> GetSessionForUser(UserSessionRequest request)
         {
-            return Ok(new HttpResponseModel
+            Guid gameSessionId = await _gameService.GetSessionForUser(request);
+
+			return Ok(new HttpResponseModel
             {
                 Success = true,
-                Message = await _gameService.GetSessionForUser(request)
+                Message = gameSessionId
             });
         }
 
         [HttpGet("games/ended/{gameSessionId}")]
         public async Task<IActionResult> CheckIfGameEnded(Guid gameSessionId)
         {
+            bool isEnded = await _gameService.CheckIfGameEnded(gameSessionId);
+
+			return Ok(new HttpResponseModel
+            {
+                Success = isEnded
+            });
+        }
+
+        [HttpPut("adm/games/update")]
+        public async Task<IActionResult> UpdateIsGameActive(AdminGameChangeActiveRequest request)
+        {
+            await _gameService.UpdateIsGameActive(request);
+
             return Ok(new HttpResponseModel
             {
-                Success = true,
-                Message = await _gameService.CheckIfGameEnded(gameSessionId)
+                Success = true
             });
         }
 
@@ -100,11 +114,11 @@ namespace game_service.Controllers
 
 						await _gameService.CreateGameAction(startGame, session.GameSessionId);
                         var dict = new Dictionary<string, object>();
-                        dict["Status"] = resp.Status;
-                        dict["Multiplier"] = resp.Multiplier;
-                        if (resp.Data != null)
+                        dict["Status"] = resp.Message.Status;
+                        dict["Multiplier"] = resp.Message.Multiplier;
+                        if (resp.Message.Data != null)
                         {
-							foreach (var kv in resp.Data)
+							foreach (var kv in resp.Message.Data)
 							{
 								dict[kv.Key] = kv.Value;
 							}
@@ -122,21 +136,17 @@ namespace game_service.Controllers
 
                         }, session.GameSessionId);
                         session.Game = game;
-                        session.CurrentMultiplier = resp.Multiplier;
-                        session.Result = resp.Status == GameStatus.EndedWin ? ResultType.Won : ResultType.Lost;
-                        session.CashWon = resp.Result;
+                        session.CurrentMultiplier = resp.Message.Multiplier;
+                        session.Result = resp.Message.Status == GameStatus.EndedWin ? ResultType.Won : ResultType.Lost;
+                        session.CashWon = resp.Message.Result;
                         await _gameService.SaveSession(session);
 
-                        if(resp.Status==GameStatus.EndedLose || resp.Status == GameStatus.EndedWin)
+                        if(resp.Message.Status==GameStatus.EndedLose || resp.Message.Status == GameStatus.EndedWin)
                         {
                             await _gameService.CreateGameHistoryRecord(session);
                         }
 
-						return Ok(new HttpResponseModel
-                        {
-                            Success = true,
-                            Message = resp
-                        });
+						return Ok(resp);
                     }
                 case ActionType.End:
                     {
@@ -146,9 +156,9 @@ namespace game_service.Controllers
 						var resp = _gameService.CashOutEarly(game, startGame.Data);
 						await _gameService.CreateGameHistoryRecord(session);
 						var dict = new Dictionary<string, object>();
-						dict["Status"] = resp.Status;
-						dict["Multiplier"] = resp.Multiplier;
-						foreach (var kv in resp.Data)
+						dict["Status"] = resp.Message.Status;
+						dict["Multiplier"] = resp.Message.Multiplier;
+						foreach (var kv in resp.Message.Data)
 						{
 							dict[kv.Key] = kv.Value;
 						}
@@ -163,11 +173,7 @@ namespace game_service.Controllers
 							Data = dict
 
 						}, session.GameSessionId);
-						return Ok(new HttpResponseModel
-						{
-							Success = true,
-							Message = resp
-						});
+						return Ok(resp);
 					}
                 default:
 					return Ok(new HttpResponseModel

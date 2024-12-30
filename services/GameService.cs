@@ -25,6 +25,7 @@ namespace game_service.services
 		public Task<bool> CheckIfGameEnded(Guid gameSessionId);
 		public Task<Guid> GetSessionForUser(UserSessionRequest request);
 		public Task CreateGameHistoryRecord(GameSession gameSession);
+		public Task UpdateIsGameActive(AdminGameChangeActiveRequest request);
 	}
 
 	public class GameService : IGameService
@@ -92,6 +93,11 @@ namespace game_service.services
 			await _gameRepository.CreateGameHistoryRecord(gameSession);
 		}
 
+		public async Task UpdateIsGameActive(AdminGameChangeActiveRequest request)
+		{
+			await _gameRepository.UpdateIsGameActive(request);
+		}
+
 		public GameActionResponse MakeMove(AbstractGame game, Dictionary<string, object> data)
 		{
 			switch (game)
@@ -104,10 +110,14 @@ namespace game_service.services
 						dict["Path"] = plinko.GetPath();
 						return new GameActionResponse
 						{
-							Status = plinko.GetStatus(),
-							Multiplier = plinko.GetMultiplier(),
-							Result = plinko.GetWinnedAmount(),
-							Data = dict
+							Success = true,
+							Message = new GameEnded
+							{
+								Status = plinko.GetStatus(),
+								Multiplier = plinko.GetMultiplier(),
+								Result = plinko.GetWinnedAmount(),
+								Data = dict
+							}
 
 						};
 					}
@@ -123,15 +133,23 @@ namespace game_service.services
 							dict["Fields"] = mines.GetField();
 							return new GameActionResponse
 							{
-								Status = mines.GetStatus(),
-								Data = dict
+								Success = true,
+								Message = new GameEnded
+								{
+									Status = mines.GetStatus(),
+									Data = dict
+								}
 							};
 						}
 						return new GameActionResponse
 						{
-							Status = mines.GetStatus(),
-							Multiplier = mines.GetMultiplier(),
-							Result = mines.GetWinnedAmount(),
+							Success = true,
+							Message = new GameEnded
+							{
+								Status = mines.GetStatus(),
+								Multiplier = mines.GetMultiplier(),
+								Result = mines.GetWinnedAmount(),
+							}
 						};
 					}
 				case ChickenGame chicken:
@@ -141,10 +159,14 @@ namespace game_service.services
 						dict["GameOver"] = isGameOver;
 						return new GameActionResponse
 						{
-							Status = chicken.GetStatus(),
-							Multiplier = chicken.GetMultiplier(),
-							Result = chicken.GetWinnedAmount(),
-							Data = dict
+							Success = true,
+							Message = new GameEnded
+							{
+								Status = chicken.GetStatus(),
+								Multiplier = chicken.GetMultiplier(),
+								Result = chicken.GetWinnedAmount(),
+								Data = dict
+							}
 						};
 					}
 				case DiceGame dice:
@@ -154,10 +176,14 @@ namespace game_service.services
 						dict["DiceSum"] = dice.GetDiceSum();
 						return new GameActionResponse
 						{
-							Status = dice.GetStatus(),
-							Multiplier = dice.GetMultiplier(),
-							Result = dice.GetWinnedAmount(),
-							Data = dict
+							Success = true,
+							Message = new GameEnded
+							{
+								Status = dice.GetStatus(),
+								Multiplier = dice.GetMultiplier(),
+								Result = dice.GetWinnedAmount(),
+								Data = dict
+							}
 						};
 					}
 				case BlackJackGame blackJack:
@@ -181,10 +207,14 @@ namespace game_service.services
 									dict["Result"] = blackJack.GetCashWon();
 									return new GameActionResponse
 									{
-										Status = blackJack.GetStatus(),
-										Multiplier = blackJack.GetMultiplier(),
-										Result = blackJack.GetWinnedAmount(),
-										Data = dict
+										Success = true,
+										Message = new GameEnded
+										{
+											Status = blackJack.GetStatus(),
+											Multiplier = blackJack.GetMultiplier(),
+											Result = blackJack.GetWinnedAmount(),
+											Data = dict
+										}
 									};
 								}
 							case PlayerMove.Info:
@@ -195,9 +225,13 @@ namespace game_service.services
 									dict["DealerSum"] = blackJack.GetDealerSum();	
 									return new GameActionResponse
 									{
-										Status = blackJack.GetStatus(),
-										Multiplier = blackJack.GetMultiplier(),
-										Data = dict
+										Success = true,
+										Message = new GameEnded
+										{
+											Status = blackJack.GetStatus(),
+											Multiplier = blackJack.GetMultiplier(),
+											Data = dict
+										}
 									};
 								}
 						}
@@ -207,10 +241,14 @@ namespace game_service.services
 						dict["DealerSum"] = blackJack.GetDealerSum();
 						return new GameActionResponse
 						{
-							Status = blackJack.GetStatus(),
-							Multiplier = blackJack.GetMultiplier(),
-							Result= blackJack.GetWinnedAmount(),
-							Data = dict
+							Success = true,
+							Message = new GameEnded
+							{
+								Status = blackJack.GetStatus(),
+								Multiplier = blackJack.GetMultiplier(),
+								Result = blackJack.GetWinnedAmount(),
+								Data = dict
+							}
 						};
 					}
 				default: return null;
@@ -230,9 +268,13 @@ namespace game_service.services
 						dict["Result"] = mines.GetCashWon();
 						return new GameActionResponse
 						{
-							Status = mines.GetStatus(),
-							Multiplier = mines.GetMultiplier(),
-							Data = dict
+							Success = true,
+							Message = new GameEnded
+							{
+								Status = mines.GetStatus(),
+								Multiplier = mines.GetMultiplier(),
+								Data = dict
+							}
 						};
 					}
 				case ChickenGame chicken:
@@ -242,9 +284,13 @@ namespace game_service.services
 						dict["Result"] = chicken.GetCashWon();
 						return new GameActionResponse
 						{
-							Status = chicken.GetStatus(),
-							Multiplier = chicken.GetMultiplier(),
-							Data = dict
+							Success = true,
+							Message = new GameEnded
+							{
+								Status = chicken.GetStatus(),
+								Multiplier = chicken.GetMultiplier(),
+								Data = dict
+							}
 						};
 
 					}
