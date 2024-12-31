@@ -14,6 +14,7 @@ namespace game_service.classes.games
 		public GameType Type { get; set; }
 		public bool CashOutEarly { get; set; }
 		private int BettedSum { get; set; }
+		private int[] Dices { get; set; }
 
 		private Dictionary<int, decimal> Multipliers = new Dictionary<int, decimal>() {
 			{ 2, 17.0m }, 
@@ -79,7 +80,7 @@ namespace game_service.classes.games
 		private int ThrowDice()
 		{
 			var rng = RandomNumberGenerator.Create();
-
+			Dices = new int[2];
 			for (int i = 0; i < 2; i++)
 			{
 				byte[] bytes = new byte[4];
@@ -87,8 +88,14 @@ namespace game_service.classes.games
 				var random = BitConverter.ToInt32(bytes, 0);
 				random = Math.Abs(random % 6) + 1;
 				DiceSum += random;
+				Dices[i] = random;
 			}
 			return DiceSum;
+		}
+
+		public int[] GetDices()
+		{
+			return Dices;
 		}
 
 		public void ValidateMove()

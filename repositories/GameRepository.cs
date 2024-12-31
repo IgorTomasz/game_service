@@ -87,7 +87,7 @@ namespace game_service.repositories
 			if(sess.Status == GameStatus.EndedWin || sess.Status == GameStatus.EndedLose)
 			{
 				sess.EndTime = DateTime.UtcNow.AddHours(1);
-				sess.CashWon = sess.Status == GameStatus.EndedLose ? 0 :gameSession.Game.GetCashWon();
+				sess.CashWon = gameSession.Game.GetCashWon();
 			}
 
 			sess.Game = gameSession.Game;

@@ -174,6 +174,8 @@ namespace game_service.services
 						dice.ValidateMove();
 						var dict = new Dictionary<string, object>();
 						dict["DiceSum"] = dice.GetDiceSum();
+						var dices = dice.GetDices();
+						dict["Dices"] = dices;
 						return new GameActionResponse
 						{
 							Success = true,
