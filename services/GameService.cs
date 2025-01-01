@@ -267,7 +267,6 @@ namespace game_service.services
 						mines.CashOut();
 						var dict = new Dictionary<string, object>();
 						dict["Fields"] = mines.GetField();
-						dict["Result"] = mines.GetCashWon();
 						return new GameActionResponse
 						{
 							Success = true,
@@ -275,6 +274,7 @@ namespace game_service.services
 							{
 								Status = mines.GetStatus(),
 								Multiplier = mines.GetMultiplier(),
+								Result = mines.GetWinnedAmount(),
 								Data = dict
 							}
 						};
@@ -283,7 +283,6 @@ namespace game_service.services
 					{
 						frog.CashOut();
 						var dict = new Dictionary<string, object>();
-						dict["Result"] = frog.GetCashWon();
 						return new GameActionResponse
 						{
 							Success = true,
@@ -291,7 +290,7 @@ namespace game_service.services
 							{
 								Status = frog.GetStatus(),
 								Multiplier = frog.GetMultiplier(),
-								Data = dict
+								Result = frog.GetWinnedAmount(),
 							}
 						};
 

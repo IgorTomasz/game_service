@@ -173,10 +173,14 @@ namespace game_service.Controllers
 						var dict = new Dictionary<string, object>();
 						dict["Status"] = resp.Message.Status;
 						dict["Multiplier"] = resp.Message.Multiplier;
-						foreach (var kv in resp.Message.Data)
-						{
-							dict[kv.Key] = kv.Value;
+                        if(resp.Message.Data != null)
+                        {
+							foreach (var kv in resp.Message.Data)
+							{
+								dict[kv.Key] = kv.Value;
+							}
 						}
+						
 						await _gameService.CreateGameAction(new ProcessGameRequest
 						{
 							Type = startGame.Type,
