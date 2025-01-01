@@ -81,9 +81,9 @@ namespace game_service.models
 					data["FinalBallPosition"] = plinko.GetBallPosition();
 					data["PlinkoPositions"] = plinko.GetPlinkoPositions();
 					data["Path"] = plinko.GetPath(); break;
-				case ChickenGame chicken:
-					data["RandomRoad"] = chicken.GetRandomRoad();
-					data["CurrentPosition"] = chicken.GetCurrentPosition();
+				case FrogGame frog:
+					data["RandomRoad"] = frog.GetRandomRoad();
+					data["CurrentPosition"] = frog.GetCurrentPosition();
 					break;
 				case BlackJackGame blackJack:
 					data["DealerHand"] = blackJack.GetDealerHand();

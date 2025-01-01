@@ -152,9 +152,9 @@ namespace game_service.services
 							}
 						};
 					}
-				case ChickenGame chicken:
+				case FrogGame frog:
 					{
-						var isGameOver = chicken.IsGameOver();
+						var isGameOver = frog.IsGameOver();
 						var dict = new Dictionary<string, object>();
 						dict["GameOver"] = isGameOver;
 						return new GameActionResponse
@@ -162,9 +162,9 @@ namespace game_service.services
 							Success = true,
 							Message = new GameEnded
 							{
-								Status = chicken.GetStatus(),
-								Multiplier = chicken.GetMultiplier(),
-								Result = chicken.GetWinnedAmount(),
+								Status = frog.GetStatus(),
+								Multiplier = frog.GetMultiplier(),
+								Result = frog.GetWinnedAmount(),
 								Data = dict
 							}
 						};
@@ -279,18 +279,18 @@ namespace game_service.services
 							}
 						};
 					}
-				case ChickenGame chicken:
+				case FrogGame frog:
 					{
-						chicken.CashOut();
+						frog.CashOut();
 						var dict = new Dictionary<string, object>();
-						dict["Result"] = chicken.GetCashWon();
+						dict["Result"] = frog.GetCashWon();
 						return new GameActionResponse
 						{
 							Success = true,
 							Message = new GameEnded
 							{
-								Status = chicken.GetStatus(),
-								Multiplier = chicken.GetMultiplier(),
+								Status = frog.GetStatus(),
+								Multiplier = frog.GetMultiplier(),
 								Data = dict
 							}
 						};

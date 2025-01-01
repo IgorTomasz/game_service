@@ -11,7 +11,7 @@ namespace game_service.classes
 			{
 				case GameType.Mines: return MinesGame.CreateGame(betAmount);
 				case GameType.Plinko: return PlinkoGame.CreateGame(betAmount);
-				case GameType.Chicken: return ChickenGame.CreateGame(betAmount);
+				case GameType.Frog: return FrogGame.CreateGame(betAmount);
 				case GameType.Dice: return DiceGame.CreateGame(betAmount);
 				case GameType.BlackJack: return BlackJackGame.CreateGame(betAmount);
 				default: throw new Exception();
@@ -24,7 +24,7 @@ namespace game_service.classes
 			{
 				case GameType.Mines: return MinesGame.RestoreGameData(gameData);
 				case GameType.Plinko: return PlinkoGame.RestoreGameData(gameData);
-				case GameType.Chicken: return ChickenGame.RestoreGameData(gameData);
+				case GameType.Frog: return FrogGame.RestoreGameData(gameData);
 				case GameType.Dice: return DiceGame.RestoreGameData(gameData);
 				case GameType.BlackJack: return BlackJackGame.RestoreGameData(gameData);
 				default: throw new Exception();

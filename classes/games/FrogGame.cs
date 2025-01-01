@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace game_service.classes.games
 {
-	public class ChickenGame : AbstractGame
+	public class FrogGame : AbstractGame
 	{
 		public decimal BetAmount { get; set; }
 		public decimal CurrentMultiplier { get; set; }
@@ -20,12 +20,12 @@ namespace game_service.classes.games
 		public static AbstractGame CreateGame(decimal betAmount)
 		{
 			Guid guid = Guid.NewGuid();
-			ChickenGame game = new ChickenGame
+			FrogGame game = new FrogGame
 			{
 				BetAmount = betAmount,
 				Status = GameStatus.InProgress,
 				GameId = guid,
-				Type = GameType.Chicken,
+				Type = GameType.Frog,
 				CurrentMultiplier = 0,
 				CurrentPosition = 0,
 				RandomRoad = 0
@@ -37,7 +37,7 @@ namespace game_service.classes.games
 		{
 			var road = JsonSerializer.Deserialize<int>(gameData.GamesValues["RandomRoad"].ToString());
 			var position = JsonSerializer.Deserialize<int>(gameData.GamesValues["CurrentPosition"].ToString());
-			return new ChickenGame
+			return new FrogGame
 			{
 				BetAmount = gameData.BetAmount,
 				Status =gameData.Status,

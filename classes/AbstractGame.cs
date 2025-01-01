@@ -25,7 +25,7 @@ namespace game_service.classes
 
 	public enum GameType
 	{
-		Mines, Plinko, Chicken, Dice, BlackJack
+		Mines, Plinko, Frog, Dice, BlackJack
 	}
 
 	public enum GameStatus
