@@ -206,7 +206,6 @@ namespace game_service.services
 									dict["DealerCards"] = blackJack.GetDealerHand();
 									dict["PlayerSum"] = blackJack.GetPlayerSum();
 									dict["DealerSum"] = blackJack.GetDealerSumWithHidden();
-									dict["Result"] = blackJack.GetCashWon();
 									return new GameActionResponse
 									{
 										Success = true,

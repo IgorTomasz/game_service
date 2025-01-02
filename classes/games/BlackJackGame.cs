@@ -201,12 +201,12 @@ namespace game_service.classes.games
 			Cards.Remove(playerCard1);
 			PlayerHand.Add(playerCard1);
 			PlayerSum += playerCard1.GetCardValue();
-			PlayerAceSum = playerCard1.IsCardAce() ? 1 : 0;
+			PlayerAceSum += playerCard1.IsCardAce() ? 1 : 0;
 			var playerCard2 = Cards.ElementAt(Cards.Count() - 1);
 			Cards.Remove(playerCard2);
 			PlayerHand.Add(playerCard2);
 			PlayerSum += playerCard2.GetCardValue();
-			PlayerAceSum = playerCard2.IsCardAce() ? 1 : 0;
+			PlayerAceSum += playerCard2.IsCardAce() ? 1 : 0;
 
 		}
 
@@ -292,7 +292,7 @@ namespace game_service.classes.games
 			Cards.Remove(playerCard);
 			PlayerHand.Add(playerCard);
 			PlayerSum += playerCard.GetCardValue();
-			PlayerAceSum = playerCard.IsCardAce() ? 1 : 0;
+			PlayerAceSum += playerCard.IsCardAce() ? 1 : 0;
 			RemovePlayerAce();
 			CheckPlayerCardSum();
 		}
