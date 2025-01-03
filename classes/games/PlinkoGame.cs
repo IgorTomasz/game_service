@@ -127,23 +127,18 @@ namespace game_service.classes.games
 
 		private int CalculateMultiplier(char[] path)
 		{
-			decimal[] temp = new decimal[4];
-
-			switch (ChoosenDifficulty)
+			var index = MultipliersEasy.Length / 2;
+			foreach (Char i in Path)
 			{
-				case Difficulty.Easy: temp = MultipliersEasy; break;
-				case Difficulty.Medium: temp = MultipliersMedium; break;
-				case Difficulty.Hard: temp = MultipliersHard; break;
-			}
-
-			var index = temp.Length/2;
-			foreach(Char i in Path)
-			{
-				if(i == 'R') index++;
+				if (i == 'R') index++;
 				if (i == 'L') index--;
 			}
-
-			CurrentMultiplier = temp[index];
+			CurrentMultiplier = ChoosenDifficulty switch
+			{
+				Difficulty.Easy => MultipliersEasy[index],
+				Difficulty.Medium => MultipliersMedium[index],
+				Difficulty.Hard => MultipliersHard[index],
+			};
 			return index;
 		}
 
