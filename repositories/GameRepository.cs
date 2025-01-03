@@ -123,7 +123,7 @@ namespace game_service.repositories
 			var gameSession = await _context.GameSessions.Where(x => x.GameSessionId==gameSessionId).FirstOrDefaultAsync();
 			if (gameSession != null)
 			{
-				return gameSession.EndTime == null ? false : true;
+				return gameSession.Status == GameStatus.EndedLose || gameSession.Status == GameStatus.EndedWin ? true : false;
 			}
 			
 			return false;
