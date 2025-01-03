@@ -152,6 +152,7 @@ namespace game_service.classes.games
 				DealerHidden = dealerHidden,
 				Cards = cards,
 				DealerSumWithHidden = dealerSumWithHidden,
+				CurrentMultiplier=gameData.CurrentMultiplier,
 			};
 		}
 
@@ -168,10 +169,6 @@ namespace game_service.classes.games
 			return game;
 		}
 
-		public decimal GetCashWon()
-		{
-			return BetAmount*CurrentMultiplier; 
-		}
 
 		public void InicializeGame(Dictionary<string, object> gameSettings)
 		{
@@ -207,6 +204,11 @@ namespace game_service.classes.games
 			PlayerHand.Add(playerCard2);
 			PlayerSum += playerCard2.GetCardValue();
 			PlayerAceSum += playerCard2.IsCardAce() ? 1 : 0;
+			if (PlayerSum == 21)
+			{
+				Status = GameStatus.EndedWin;
+				CurrentMultiplier = _blackjack;
+			}
 
 		}
 
@@ -219,6 +221,7 @@ namespace game_service.classes.games
 					Cards.Add(new Card(Values[i], Types[j]));
 				}
 			}
+
 		}
 
 		public void CheckPlayerCardSum()
@@ -326,6 +329,8 @@ namespace game_service.classes.games
 
 		public void ShuffleCards()
 		{
+			Cards = Cards.OrderBy(x => Random.Shared.Next()).ToList();
+			Cards = Cards.OrderBy(x => Random.Shared.Next()).ToList();
 			Cards = Cards.OrderBy(x => Random.Shared.Next()).ToList();
 		}
 

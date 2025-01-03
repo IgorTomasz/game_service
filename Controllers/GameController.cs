@@ -138,7 +138,7 @@ namespace game_service.Controllers
                         session.Game = game;
                         session.CurrentMultiplier = game.GetMultiplier();
                         session.Result = game.GetStatus() == GameStatus.InProgress ? null : game.GetStatus() == GameStatus.EndedLose ? ResultType.Lost : ResultType.Won;
-                        session.CashWon = game.GetCashWon();
+                        session.CashWon = game.GetWinnedAmount();
                         
 
                         if(resp.Message.Status==GameStatus.EndedLose || resp.Message.Status == GameStatus.EndedWin)
@@ -164,7 +164,7 @@ namespace game_service.Controllers
 							session.Game = game;
 							session.CurrentMultiplier = game.GetMultiplier();
 							session.Result = game.GetStatus() == GameStatus.InProgress ? null : game.GetStatus() == GameStatus.EndedLose ? ResultType.Lost : ResultType.Won;
-							session.CashWon = game.GetCashWon();
+							session.CashWon = game.GetWinnedAmount();
                             session.Status = game.GetStatus();
                             await _gameService.SaveSession(session);
 

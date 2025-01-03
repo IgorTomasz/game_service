@@ -27,11 +27,6 @@ namespace game_service.classes.games
 			return CurrentMultiplier;
 		}
 
-		public decimal GetCashWon()
-		{
-			return BetAmount * CurrentMultiplier;
-		}
-
 		public GameStatus GetStatus()
 		{
 			return Status;

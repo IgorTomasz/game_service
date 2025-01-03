@@ -48,9 +48,6 @@ namespace game_service.classes.games
 				CurrentPosition = position
 			};
 		}
-
-		public decimal GetCashWon() { return BetAmount*CurrentMultiplier; }
-
 		public decimal GetMultiplier() { return CurrentMultiplier; }
 
 		public GameStatus GetStatus() { return Status; }

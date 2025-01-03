@@ -12,7 +12,6 @@ namespace game_service.classes
 		public Guid GameId { get; set; }
 
 		public decimal GetMultiplier();
-		public decimal GetCashWon();
 		public Guid GetGameId();
 		public GameStatus GetStatus();
 		public decimal GetWinnedAmount();

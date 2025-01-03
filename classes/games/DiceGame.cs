@@ -72,11 +72,6 @@ namespace game_service.classes.games
 			return game;
 		}
 
-		public decimal GetCashWon()
-		{
-			return BetAmount*CurrentMultiplier;
-		}
-
 		private int ThrowDice()
 		{
 			var rng = RandomNumberGenerator.Create();

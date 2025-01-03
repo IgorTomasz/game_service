@@ -44,7 +44,7 @@ namespace game_service.repositories
 				BetAmount = game.BetAmount,
 				GameType = game.Type,
 				Result = null,
-				CashWon = 0,
+				CashWon = game.GetWinnedAmount(),
 				StartTime = DateTime.UtcNow.AddHours(1),
 				EndTime = null,
 				Status = game.GetStatus(),
@@ -87,7 +87,7 @@ namespace game_service.repositories
 			if(sess.Status == GameStatus.EndedWin || sess.Status == GameStatus.EndedLose)
 			{
 				sess.EndTime = DateTime.UtcNow.AddHours(1);
-				sess.CashWon = gameSession.Game.GetCashWon();
+				sess.CashWon = gameSession.Game.GetWinnedAmount();
 			}
 
 			sess.Game = gameSession.Game;

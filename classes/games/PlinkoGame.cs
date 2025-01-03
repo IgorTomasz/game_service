@@ -100,10 +100,6 @@ namespace game_service.classes.games
 			return game;
 		}
 
-		public decimal GetCashWon()
-		{
-			return CurrentMultiplier * BetAmount;
-		}
 
 		private char[] CalculatePath()
 		{

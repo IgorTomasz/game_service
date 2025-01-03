@@ -224,6 +224,21 @@ namespace game_service.services
 									dict["DealerCards"] = blackJack.GetDealerHand();
 									dict["PlayerSum"] = blackJack.GetPlayerSum();
 									dict["DealerSum"] = blackJack.GetDealerSum();	
+
+									if(blackJack.GetStatus() == GameStatus.EndedWin)
+									{
+										return new GameActionResponse
+										{
+											Success = true,
+											Message = new GameEnded
+											{
+												Status = blackJack.GetStatus(),
+												Multiplier = blackJack.GetMultiplier(),
+												Result = blackJack.GetWinnedAmount(),
+												Data = dict
+											}
+										};
+									}
 									return new GameActionResponse
 									{
 										Success = true,
