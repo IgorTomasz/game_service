@@ -22,7 +22,8 @@ namespace game_service.classes.games
 		private int RowsCount { get; set; }
 		private Difficulty ChoosenDifficulty { get; set; }
 		private double FinalBallPosition { get; set; }
-		private Dictionary<string, double[]> PlinkoPositions { get; set; }
+		//private Dictionary<string, double[]> PlinkoPositions { get; set; }
+		private Dictionary<string, Dictionary<string, double[]>> PlinkoPositions { get; set; }
 		private readonly decimal[] MultipliersEasy = { 16, 9, 2, 1.4m, 1.4m,1.2m, 1.1m, 1, 0.5m, 1, 1.1m, 1.2m, 1.4m, 1.4m, 2, 9, 16 };
 		private readonly decimal[] MultipliersMedium = { 110, 41, 10, 5, 3, 1.5m, 1m, 0.5m, 0.3m, 0.5m, 1, 1.5m, 3, 5, 10, 41, 110 };
 		private readonly decimal[] MultipliersHard = { 1000, 130, 26, 9, 4, 2, 0.2m, 0.2m, 0.2m, 0.2m, 0.2m, 2, 4, 9, 26, 130, 1000 };
@@ -42,19 +43,15 @@ namespace game_service.classes.games
 			return Status;
 		}
 
-		public char[] GetPath()
-		{
-			return Path;
-		}
 
 		public double GetBallPosition()
 		{
 			return FinalBallPosition;
 		}
 
-		public Dictionary<string, double[]> GetPlinkoPositions()
+		public Dictionary<string, double[]> GetPlinkoPositions(int rows)
 		{
-			return PlinkoPositions;
+			return PlinkoPositions[rows.ToString()];
 		}
 
 		public Difficulty GetChoosenDifficulty()
@@ -73,8 +70,17 @@ namespace game_service.classes.games
 			
 			var rows = JsonSerializer.Deserialize<int>(gameData.GamesValues["Rows"].ToString());
 			var diff = JsonSerializer.Deserialize<Difficulty>(gameData.GamesValues["Difficulty"].ToString());
-			var file = File.ReadAllText("./classes/games/plinko_positions.json");
-			var plinkoPos = JsonSerializer.Deserialize<Dictionary<string, double[]>>(file);
+			var file16 = File.ReadAllText("./classes/games/plinko_positions_16.json");
+			var file12 = File.ReadAllText("./classes/games/plinko_positions_12.json");
+			var file8 = File.ReadAllText("./classes/games/plinko_positions_8.json");
+			var plinkoPos16 = JsonSerializer.Deserialize<Dictionary<string, double[]>>(file16);
+			var plinkoPos12 = JsonSerializer.Deserialize<Dictionary<string, double[]>>(file12);
+			var plinkoPos8 = JsonSerializer.Deserialize<Dictionary<string, double[]>>(file8);
+
+			Dictionary < string, Dictionary<string, double[]>> temp = new Dictionary<string,Dictionary<string, double[]>> ();
+			temp.Add("16", plinkoPos16);
+			temp.Add("12",plinkoPos12);
+			temp.Add("8",plinkoPos8);
 			return new PlinkoGame
 			{
 				BetAmount = gameData.BetAmount,
@@ -84,7 +90,7 @@ namespace game_service.classes.games
 				FinalBallPosition = ballPos,
 				ChoosenDifficulty = diff,
 				RowsCount = rows,
-				PlinkoPositions = plinkoPos
+				PlinkoPositions = temp
 			};
 		}
 
@@ -128,10 +134,19 @@ namespace game_service.classes.games
 				var highIndex = (int)Math.Ceiling(pos);
 				var weight = pos - Math.Floor(pos);
 
-				if(lowIndex == highIndex)
+				if (i == 0)
 				{
-					respMult[i] = baseMult[lowIndex];
-					respWeight[i] = baseWeight[lowIndex];
+					decimal ratio = (decimal)(16 - rows) / 16;
+					respMult[i] = baseMult[0] - (baseMult[0] - baseMult[1]) * ratio;
+					respWeight[i] = (int)(baseWeight[0] - (baseWeight[0] - baseWeight[1]) * ratio);
+
+				}
+				else if (i == lessRows - 1)
+				{
+					decimal ratio = (decimal)(16 - rows) / 16;
+					respMult[i] = baseMult[baseMult.Length - 1] - (baseMult[baseMult.Length - 1] - baseMult[baseMult.Length - 2]) * ratio;
+					respWeight[i] = (int)(baseWeight[baseWeight.Length - 1] - (baseWeight[baseWeight.Length - 1] - baseWeight[baseWeight.Length - 2]) * ratio);
+
 				}
 				else
 				{
@@ -139,7 +154,52 @@ namespace game_service.classes.games
 					respWeight[i] = (int)(baseWeight[lowIndex] + weight * (baseWeight[highIndex] - baseWeight[lowIndex]));
 				}
 
-				
+
+				if (rows < 16)
+				{
+					if (difficulty == Difficulty.Hard)
+					{
+						if (rows == 8 && respMult[i] >= 0.2m)
+						{
+							var scaleFactor = 1.15m; // Specjalny współczynnik dla 8 wierszy
+							respMult[i] = respMult[i] * scaleFactor;
+						}
+						else if (rows == 12 && respMult[i] > 200)
+						{
+							var scaleFactor = 0.65m; // Specjalny współczynnik dla 12 wierszy
+							respMult[i] = respMult[i] * scaleFactor;
+						}
+					}
+					else if (difficulty == Difficulty.Medium)
+					{
+						if (rows == 8 && respMult[i] > 70)
+						{
+							var scaleFactor = 0.4m;
+							respMult[i] = respMult[i] * scaleFactor;
+						}
+						else if (rows == 12 && respMult[i] > 3)
+						{
+							var scaleFactor = 0.70m;
+							respMult[i] = respMult[i] * scaleFactor;
+						}
+					}
+					else if (difficulty == Difficulty.Easy)
+					{
+						if (rows == 8 && respMult[i] > 1)
+						{
+							var boostFactor = 1.05m; // Boost dla trybu easy przy 8 wierszach
+							respMult[i] = respMult[i] * boostFactor;
+						}
+						else if (rows == 12 && respMult[i] > 40)
+						{
+							var boostFactor = 0.90m; // Boost dla trybu easy przy 8 wierszach
+							respMult[i] = respMult[i] * boostFactor;
+						}
+
+					}
+				}
+
+
 			}
 
 			for (int j = 0; j < respMult.Length; j++)
@@ -172,10 +232,11 @@ namespace game_service.classes.games
 
 		private double GetPosition(int index)
 		{
-			double[] positions = PlinkoPositions[index.ToString()];
+			var positions = GetPlinkoPositions(RowsCount);
+			double[] pos = positions[index.ToString()];
 			var rand = new Random();
-			var indexPos = rand.Next(positions.Length);
-			return positions[indexPos];
+			var indexPos = rand.Next(pos.Length);
+			return pos[indexPos];
 		}
 
 		//trzeba bedzie zmienic typ zwracany
@@ -194,7 +255,6 @@ namespace game_service.classes.games
 		{
 			RowsCount = JsonSerializer.Deserialize<int>(gameSettings["Rows"].ToString());
 			ChoosenDifficulty = JsonSerializer.Deserialize<Difficulty>(gameSettings["Difficulty"].ToString());
-			Path = new char[RowsCount];
 		}
 
 		public void CashOut()

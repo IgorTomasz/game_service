@@ -78,8 +78,7 @@ namespace game_service.models
 				case PlinkoGame plinko:
 					data["Rows"] = plinko.GetRowsCount();
 					data["Difficulty"] = plinko.GetChoosenDifficulty();
-					data["FinalBallPosition"] = plinko.GetBallPosition();
-					data["PlinkoPositions"] = plinko.GetPlinkoPositions(); break;
+					data["FinalBallPosition"] = plinko.GetBallPosition(); break;
 				case FrogGame frog:
 					data["RandomRoad"] = frog.GetRandomRoad();
 					data["CurrentPosition"] = frog.GetCurrentPosition();
