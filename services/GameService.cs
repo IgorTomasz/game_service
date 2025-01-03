@@ -113,7 +113,6 @@ namespace game_service.services
 						plinko.CalculateDrop();
 						var dict = new Dictionary<string, object>();
 						dict["Position"] = plinko.GetBallPosition();
-						dict["Path"] = plinko.GetPath();
 						return new GameActionResponse
 						{
 							Success = true,
