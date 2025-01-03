@@ -61,7 +61,7 @@ namespace game_service.repositories
 
 		public async Task<List<GameSession>> EndAllActiveSessions(UserSessionRequest request)
 		{
-			var sessions = await _context.GameSessions.Where(x => x.UserId == request.UserId && x.UserSessionId == request.UserSessionId && x.GameType == request.GameType && x.EndTime == null).ToListAsync();
+			var sessions = await _context.GameSessions.Where(x => x.UserId == request.UserId && x.UserSessionId == request.UserSessionId && x.EndTime == null).ToListAsync();
 			sessions.ForEach(e=>
 			{
 				e.EndTime = DateTime.UtcNow.AddHours(1);
