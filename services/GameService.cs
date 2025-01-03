@@ -24,8 +24,9 @@ namespace game_service.services
 		public Task<Games> CreateGame(CreateGameRequest createGame);
 		public Task<bool> CheckIfGameEnded(Guid gameSessionId);
 		public Task<Guid> GetSessionForUser(UserSessionRequest request);
-		public Task CreateGameHistoryRecord(GameSession gameSession);
+		public Task<Guid> CreateGameHistoryRecord(GameSession gameSession);
 		public Task UpdateIsGameActive(AdminGameChangeActiveRequest request);
+		public Task<List<GameSession>> EndAllActiveSessions(UserSessionRequest request);
 	}
 
 	public class GameService : IGameService
@@ -88,14 +89,19 @@ namespace game_service.services
 			return await _gameRepository.GetSessionForUser(request);
 		}
 
-		public async Task CreateGameHistoryRecord(GameSession gameSession)
+		public async Task<Guid> CreateGameHistoryRecord(GameSession gameSession)
 		{
-			await _gameRepository.CreateGameHistoryRecord(gameSession);
+			return await _gameRepository.CreateGameHistoryRecord(gameSession);
 		}
 
 		public async Task UpdateIsGameActive(AdminGameChangeActiveRequest request)
 		{
 			await _gameRepository.UpdateIsGameActive(request);
+		}
+
+		public async Task<List<GameSession>> EndAllActiveSessions(UserSessionRequest request)
+		{
+			return await _gameRepository.EndAllActiveSessions(request);
 		}
 
 		public GameActionResponse MakeMove(AbstractGame game, Dictionary<string, object> data)

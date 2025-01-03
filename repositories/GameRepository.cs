@@ -18,8 +18,9 @@ namespace game_service.repositories
 		public Task<Games> CreateGame(CreateGameRequest createGame);
 		public Task<bool> CheckIfGameEnded(Guid gameSessionId);
 		public Task<Guid> GetSessionForUser(UserSessionRequest request);
-		public Task CreateGameHistoryRecord(GameSession gameSession);
+		public Task<Guid> CreateGameHistoryRecord(GameSession gameSession);
 		public Task UpdateIsGameActive(AdminGameChangeActiveRequest request);
+		public Task<List<GameSession>> EndAllActiveSessions(UserSessionRequest request);
 	}
 
 	public class GameRepository : IGameRepository
@@ -56,6 +57,19 @@ namespace game_service.repositories
 			await _context.GameSessions.AddAsync(gameSession);
 			await _context.SaveChangesAsync();
 			return gameSession.GameSessionId;
+		}
+
+		public async Task<List<GameSession>> EndAllActiveSessions(UserSessionRequest request)
+		{
+			var sessions = await _context.GameSessions.Where(x => x.UserId == request.UserId && x.UserSessionId == request.UserSessionId && x.GameType == request.GameType && x.EndTime == null).ToListAsync();
+			sessions.ForEach(e=>
+			{
+				e.EndTime = DateTime.UtcNow.AddHours(1);
+				e.Status = GameStatus.EndedLose;
+			});
+			await _context.SaveChangesAsync();
+
+			return sessions;
 		}
 
 		public async Task CreateGameAction(ProcessGameRequest request, Guid gameSessionId)
@@ -116,7 +130,7 @@ namespace game_service.repositories
 
 		}
 
-		public async Task CreateGameHistoryRecord(GameSession gameSession)
+		public async Task<Guid> CreateGameHistoryRecord(GameSession gameSession)
 		{
 			Guid guid = Guid.NewGuid();
 			GameHistory gameHistory = new GameHistory
@@ -130,7 +144,10 @@ namespace game_service.repositories
 				Timestamp = DateTime.UtcNow.AddHours(1)
 			};
 			await _context.GameHistory.AddAsync(gameHistory);
+			
 			await _context.SaveChangesAsync();
+
+			return guid;
 		}
 
 		public async Task<Guid> GetSessionForUser(UserSessionRequest request)

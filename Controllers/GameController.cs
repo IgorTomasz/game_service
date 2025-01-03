@@ -88,6 +88,23 @@ namespace game_service.Controllers
                         AbstractGame game = _gameService.GetGame(startGame);
                         game.InicializeGame(startGame.Data);
                         //dodac sprawdzenie aktywnych gameSession i zakonczyc
+
+                        var sessions = await _gameService.EndAllActiveSessions(new UserSessionRequest
+                        {
+                            UserId = startGame.UserId,
+                            UserSessionId = startGame.UserSessionId,
+                            GameType = startGame.Type
+                        });
+
+                        foreach (var session in sessions)
+                        {
+							var historyId = await _gameService.CreateGameHistoryRecord(session);
+							session.GameHistoryId = historyId;
+                            await _gameService.SaveSession(session);
+						}
+
+                        
+
                         Guid sessionId = await _gameService.CreateGameSession(game, startGame.UserId, startGame.UserSessionId);
                         await _gameService.CreateGameAction(startGame, sessionId);
 
@@ -144,7 +161,8 @@ namespace game_service.Controllers
                         if(resp.Message.Status==GameStatus.EndedLose || resp.Message.Status == GameStatus.EndedWin)
                         {
                             session.EndTime = DateTime.Now.AddHours(1);
-                            await _gameService.CreateGameHistoryRecord(session);
+                            var historyId = await _gameService.CreateGameHistoryRecord(session);
+                            session.GameHistoryId = historyId;
                         }
 
 						await _gameService.SaveSession(session);
