@@ -133,7 +133,7 @@ namespace game_service.services
 
 						MinesPosition movePosition = new MinesPosition { X = X, Y = Y };
 						var isOver = mines.ValidateMove(movePosition);
-						if (isOver) {
+						if (isOver && mines.GetStatus() == GameStatus.EndedLose) {
 							var dict = new Dictionary<string, object>();
 							dict["Fields"] = mines.GetField();
 							return new GameActionResponse
