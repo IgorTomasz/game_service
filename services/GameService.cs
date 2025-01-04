@@ -146,6 +146,25 @@ namespace game_service.services
 								}
 							};
 						}
+
+						if (isOver && mines.GetStatus() == GameStatus.EndedWin)
+						{
+							var dict = new Dictionary<string, object>();
+							dict["Fields"] = mines.GetField();
+							return new GameActionResponse
+							{
+								Success = true,
+								Message = new GameEnded
+								{
+									Status = mines.GetStatus(),
+									Multiplier = mines.GetMultiplier(),
+									Result = mines.GetWinnedAmount(),
+									Data = dict
+								}
+							};
+						}
+
+
 						return new GameActionResponse
 						{
 							Success = true,
