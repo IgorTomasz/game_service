@@ -27,6 +27,7 @@ namespace game_service.services
 		public Task<Guid> CreateGameHistoryRecord(GameSession gameSession);
 		public Task UpdateIsGameActive(AdminGameChangeActiveRequest request);
 		public Task<List<GameSession>> EndAllActiveSessions(UserSessionRequest request);
+		public Task<List<Games>> GetGamesAdmin();
 	}
 
 	public class GameService : IGameService
@@ -56,6 +57,11 @@ namespace game_service.services
 		public AbstractGame RestoreGame(GameData request)
 		{
 			return GameFactory.RestoreGameFactory(request);
+		}
+
+		public async Task<List<Games>> GetGamesAdmin()
+		{
+			return await _gameRepository.GetGamesAdmin();
 		}
 
 		public async Task CreateGameAction(ProcessGameRequest request, Guid gameSessionId)

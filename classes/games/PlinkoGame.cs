@@ -214,8 +214,10 @@ namespace game_service.classes.games
 		private int GetIndex(int[] weights)
 		{
 			var total = weights.Sum();
-			var rand = new Random();
-			var num = rand.Next(total);
+			var rand = RandomNumberGenerator.Create();
+			var arr = new byte[8];
+			rand.GetNonZeroBytes(arr);
+			var num = BitConverter.ToInt32(arr);
 			var sum = 0;
 
 			for (int i = 0; i < weights.Length; i++)

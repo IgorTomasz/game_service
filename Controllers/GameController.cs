@@ -78,6 +78,18 @@ namespace game_service.Controllers
             });
         }
 
+		[HttpGet("adm/games")]
+		public async Task<IActionResult> GetAllGamesAdmin()
+		{
+			var games = await _gameService.GetGamesAdmin();
+
+			return Ok(new GamesResponse
+			{
+				Success = true,
+                Games = games
+			});
+		}
+
 		[HttpPost("process")]
         public async Task<IActionResult> ProcessGame(ProcessGameRequest startGame)
         {

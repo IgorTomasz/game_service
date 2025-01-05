@@ -21,6 +21,7 @@ namespace game_service.repositories
 		public Task<Guid> CreateGameHistoryRecord(GameSession gameSession);
 		public Task UpdateIsGameActive(AdminGameChangeActiveRequest request);
 		public Task<List<GameSession>> EndAllActiveSessions(UserSessionRequest request);
+		public Task<List<Games>> GetGamesAdmin();
 	}
 
 	public class GameRepository : IGameRepository
@@ -111,6 +112,11 @@ namespace game_service.repositories
 		public async Task<List<Games>> GetGames()
 		{
 			return await _context.Games.Where(x => x.IsActive==true).ToListAsync();
+		}
+
+		public async Task<List<Games>> GetGamesAdmin()
+		{
+			return await _context.Games.ToListAsync();
 		}
 
 		public async Task<List<Games>> GetGamesByCategory(GameCategory category)
