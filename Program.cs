@@ -1,6 +1,7 @@
 
 using game_service.classes;
 using game_service.context;
+using game_service.middleware;
 using game_service.repositories;
 using game_service.services;
 using Microsoft.EntityFrameworkCore;
@@ -35,12 +36,12 @@ namespace game_service
 			/**
              * Authorization with gateway api by ip filtering
              */
-			//app.UseMiddleware<IpFilteringMiddleware>();
+			app.UseMiddleware<IpFilteringMiddleware>();
 
 			/**
              * Authorization with gateway api by secret key
              */
-			//app.UseMiddleware<GatewayAuthenticationMiddleware>();
+			app.UseMiddleware<GatewayAuthenticationMiddleware>();
 
 			app.UseHttpsRedirection();
 
