@@ -49,7 +49,7 @@ namespace game_service.classes.games
 			return FinalBallPosition;
 		}
 
-		public Dictionary<string, double[]> GetPlinkoPositions(int rows)
+		private Dictionary<string, double[]> GetPlinkoPositions(int rows)
 		{
 			return PlinkoPositions[rows.ToString()];
 		}
@@ -123,13 +123,14 @@ namespace game_service.classes.games
 				return (baseMult, baseWeight);
 			}
 
-			var lessRows = rows+1;
+			var lessRows = rows + 1;
 			var respMult = new decimal[lessRows];
 			var respWeight = new int[lessRows];
 
 			for (int i = 0; i < lessRows; i++)
 			{
-				var pos = (double)i/(lessRows-1)*(baseMult.Length-1);
+				var pos = (double)i * ((baseMult.Length - 1) - 0.5) / (lessRows - 1);
+
 				var lowIndex = (int)Math.Floor(pos);
 				var highIndex = (int)Math.Ceiling(pos);
 				var weight = pos - Math.Floor(pos);
@@ -161,12 +162,12 @@ namespace game_service.classes.games
 					{
 						if (rows == 8 && respMult[i] >= 0.2m)
 						{
-							var scaleFactor = 1.15m; // Specjalny współczynnik dla 8 wierszy
+							var scaleFactor = 1m;
 							respMult[i] = respMult[i] * scaleFactor;
 						}
-						else if (rows == 12 && respMult[i] > 200)
+						else if (rows == 12 && respMult[i] >= 40)
 						{
-							var scaleFactor = 0.65m; // Specjalny współczynnik dla 12 wierszy
+							var scaleFactor = 0.8m;
 							respMult[i] = respMult[i] * scaleFactor;
 						}
 					}
@@ -177,9 +178,9 @@ namespace game_service.classes.games
 							var scaleFactor = 0.4m;
 							respMult[i] = respMult[i] * scaleFactor;
 						}
-						else if (rows == 12 && respMult[i] > 3)
+						else if (rows == 12 && respMult[i] > 0.3m)
 						{
-							var scaleFactor = 0.70m;
+							var scaleFactor = 0.96m;
 							respMult[i] = respMult[i] * scaleFactor;
 						}
 					}
@@ -187,12 +188,12 @@ namespace game_service.classes.games
 					{
 						if (rows == 8 && respMult[i] > 1)
 						{
-							var boostFactor = 1.05m; // Boost dla trybu easy przy 8 wierszach
+							var boostFactor = 1m;
 							respMult[i] = respMult[i] * boostFactor;
 						}
-						else if (rows == 12 && respMult[i] > 40)
+						else if (rows == 12 && respMult[i] > 1)
 						{
-							var boostFactor = 0.90m; // Boost dla trybu easy przy 8 wierszach
+							var boostFactor = 0.98m;
 							respMult[i] = respMult[i] * boostFactor;
 						}
 

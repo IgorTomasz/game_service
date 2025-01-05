@@ -224,7 +224,7 @@ namespace game_service.classes.games
 
 		}
 
-		public void CheckPlayerCardSum()
+		private void CheckPlayerCardSum()
 		{
 			if (PlayerSum == 21)
 			{
@@ -238,7 +238,7 @@ namespace game_service.classes.games
 			}
 		}
 
-		public void CheckEndGameSum()
+		private void CheckEndGameSum()
 		{
 			if (DealerSumWithHidden > PlayerSum)
 			{
@@ -257,7 +257,7 @@ namespace game_service.classes.games
 			}
 		}
 
-		public void CheckDealerCardSum()
+		private void CheckDealerCardSum()
 		{
 			if (DealerSumWithHidden == 21)
 			{
@@ -271,7 +271,7 @@ namespace game_service.classes.games
 			}
 		}
 
-		public void RemovePlayerAce()
+		private void RemovePlayerAce()
 		{
 			if(PlayerAceSum > 0 && PlayerSum > 21)
 			{
@@ -280,7 +280,7 @@ namespace game_service.classes.games
 			}
 		}
 
-		public void RemoveDealerAce()
+		private void RemoveDealerAce()
 		{
 			if (DealerAceSum > 0 && DealerSumWithHidden > 21)
 			{
@@ -327,7 +327,7 @@ namespace game_service.classes.games
 			
 		}
 
-		public void ShuffleCards()
+		private void ShuffleCards()
 		{
 			Cards = Cards.OrderBy(x => Random.Shared.Next()).ToList();
 			Cards = Cards.OrderBy(x => Random.Shared.Next()).ToList();
