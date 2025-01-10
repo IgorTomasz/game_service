@@ -22,7 +22,6 @@ namespace game_service.classes.games
 		private int RowsCount { get; set; }
 		private Difficulty ChoosenDifficulty { get; set; }
 		private double FinalBallPosition { get; set; }
-		//private Dictionary<string, double[]> PlinkoPositions { get; set; }
 		private Dictionary<string, Dictionary<string, double[]>> PlinkoPositions { get; set; }
 		private readonly decimal[] MultipliersEasy = { 16, 9, 2, 1.4m, 1.4m,1.2m, 1.1m, 1, 0.5m, 1, 1.1m, 1.2m, 1.4m, 1.4m, 2, 9, 16 };
 		private readonly decimal[] MultipliersMedium = { 110, 41, 10, 5, 3, 1.5m, 1m, 0.5m, 0.3m, 0.5m, 1, 1.5m, 3, 5, 10, 41, 110 };
@@ -243,7 +242,6 @@ namespace game_service.classes.games
 			return pos[indexPos];
 		}
 
-		//trzeba bedzie zmienic typ zwracany
 		public void CalculateDrop()
 		{
 			var (multipliers, weights) = GetMultAndWeights(RowsCount, ChoosenDifficulty);

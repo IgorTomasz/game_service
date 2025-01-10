@@ -20,33 +20,23 @@ namespace game_service
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
             builder.Services.AddDbContext<GameDatabaseContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
             builder.Services.AddScoped<IGameRepository, GameRepository>();
             builder.Services.AddScoped<IGameService, GameService>();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-			/**
-             * Authorization with gateway api by ip filtering
-             */
 			app.UseMiddleware<IpFilteringMiddleware>();
 
-			/**
-             * Authorization with gateway api by secret key
-             */
 			app.UseMiddleware<GatewayAuthenticationMiddleware>();
 
 			app.UseHttpsRedirection();

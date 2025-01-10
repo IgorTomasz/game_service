@@ -41,11 +41,6 @@ namespace game_service.classes.games
 		{
 			return Type;
 		}
-
-		public string ToString()
-		{
-			return Value + " - " + Type;
-		}
 	}
 	public class BlackJackGame : AbstractGame
 	{
