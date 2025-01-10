@@ -1,10 +1,16 @@
 
 using game_service.classes;
+using game_service.classes.games;
 using game_service.context;
 using game_service.middleware;
+using game_service.models;
+using game_service.models.DTOs;
 using game_service.repositories;
 using game_service.services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace game_service
 {
@@ -51,6 +57,9 @@ namespace game_service
             app.MapControllers();
 
             app.Run();
-        }
+		}
     }
 }
+
+
+

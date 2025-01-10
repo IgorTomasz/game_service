@@ -130,7 +130,6 @@ namespace game_service.classes.games
 			for (int i = 0; i < lessRows; i++)
 			{
 				var pos = (double)i * ((baseMult.Length - 1) - 0.5) / (lessRows - 1);
-
 				var lowIndex = (int)Math.Floor(pos);
 				var highIndex = (int)Math.Ceiling(pos);
 				var weight = pos - Math.Floor(pos);
@@ -208,6 +207,7 @@ namespace game_service.classes.games
 				respMult[j] = Math.Round(respMult[j], 2);
 			}
 
+
 			return (respMult, respWeight);
 		}
 
@@ -217,7 +217,8 @@ namespace game_service.classes.games
 			var rand = RandomNumberGenerator.Create();
 			var arr = new byte[8];
 			rand.GetNonZeroBytes(arr);
-			var num = BitConverter.ToInt32(arr);
+			var tempNum = BitConverter.ToInt32(arr, 0) & Int32.MaxValue;
+			var num = 1 + (tempNum % (total - 1));
 			var sum = 0;
 
 			for (int i = 0; i < weights.Length; i++)

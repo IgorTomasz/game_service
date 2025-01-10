@@ -99,7 +99,6 @@ namespace game_service.Controllers
                     {
                         AbstractGame game = _gameService.GetGame(startGame);
                         game.InicializeGame(startGame.Data);
-                        //dodac sprawdzenie aktywnych gameSession i zakonczyc
 
                         var sessions = await _gameService.EndAllActiveSessions(new UserSessionRequest
                         {
@@ -108,14 +107,15 @@ namespace game_service.Controllers
                             GameType = startGame.Type
                         });
 
-                        foreach (var session in sessions)
+                        if (sessions.Any())
                         {
-							var historyId = await _gameService.CreateGameHistoryRecord(session);
-							session.GameHistoryId = historyId;
-                            await _gameService.SaveSession(session);
-						}
-
-                        
+                            foreach (var session in sessions)
+                            {
+                                var historyId = await _gameService.CreateGameHistoryRecord(session);
+                                session.GameHistoryId = historyId;
+                                await _gameService.SaveSession(session);
+                            }
+                        }
 
                         Guid sessionId = await _gameService.CreateGameSession(game, startGame.UserId, startGame.UserSessionId);
                         await _gameService.CreateGameAction(startGame, sessionId);
@@ -186,7 +186,17 @@ namespace game_service.Controllers
 						GameSession session = await _gameService.GetGameSession((Guid)startGame.GameSessionId);
 						AbstractGame game = session.Game;
 						await _gameService.CreateGameAction(startGame, session.GameSessionId);
-						var resp = _gameService.CashOutEarly(game, startGame.Data);
+						var resp = _gameService.CashOutEarly(game);
+
+                        if(resp == null)
+                        {
+							return Ok(new HttpResponseModel
+							{
+								Success = false,
+								Error = "Wrong game type for cashout"
+							});
+						}
+
                         if (resp.Success)
                         {
                             session.CashedOutEarly = true;
@@ -228,7 +238,7 @@ namespace game_service.Controllers
 					return Ok(new HttpResponseModel
 					{
 						Success = false,
-						Error = "No action type was given"
+						Error = "Wrong action type or no action type was given"
 					});
 				
 			}

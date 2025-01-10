@@ -59,15 +59,15 @@ namespace game_service.classes.games
 		public bool IsGameOver()
 		{
 			CurrentPosition++;
+			if (CurrentPosition == RandomRoad)
+			{
+				Status = GameStatus.EndedLose;
+				return true;
+			}
 			if (CurrentPosition == Multipliers.Length)
 			{
 				Status = GameStatus.EndedWin;
 				CurrentMultiplier = Multipliers[CurrentPosition - 1];
-				return true;
-			}
-			if (CurrentPosition == RandomRoad)
-			{
-				Status = GameStatus.EndedLose;
 				return true;
 			}
 			CurrentMultiplier=Multipliers[CurrentPosition-1];
@@ -80,7 +80,7 @@ namespace game_service.classes.games
 			byte[] bytes = new byte[4];
 			rng.GetBytes(bytes);
 			var random = BitConverter.ToInt32(bytes, 0);
-			RandomRoad = Math.Abs(random%24)+1;
+			RandomRoad = Math.Abs(random%25)+1;
 		}
 
 		public void CashOut()

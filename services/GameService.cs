@@ -17,7 +17,7 @@ namespace game_service.services
 		public Task<GameSession> GetGameSession(Guid gameSessionId);
 		public AbstractGame RestoreGame(GameData request);
 		public GameActionResponse MakeMove(AbstractGame game, Dictionary<string, object> data);
-		public GameActionResponse CashOutEarly(AbstractGame game, Dictionary<string, object> data);
+		public GameActionResponse CashOutEarly(AbstractGame game);
 		public Task SaveSession(GameSession gameSession);
 		public Task<List<Games>> GetGames();
 		public Task<List<Games>> GetGamesByCategory(int category);
@@ -302,7 +302,7 @@ namespace game_service.services
 			}
 		}
 
-		public GameActionResponse CashOutEarly(AbstractGame game, Dictionary<string, object> data)
+		public GameActionResponse CashOutEarly(AbstractGame game)
 		{
 			switch (game)
 			{
@@ -326,7 +326,6 @@ namespace game_service.services
 				case FrogGame frog:
 					{
 						frog.CashOut();
-						var dict = new Dictionary<string, object>();
 						return new GameActionResponse
 						{
 							Success = true,
