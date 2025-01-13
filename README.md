@@ -43,7 +43,7 @@ System implementuje wielopoziomowe zabezpieczenia:
 ### Przy użyciu Dockera:
 ```bash
 # Sklonuj repozytorium
-git clone https://github.com/your-username/casino-games-service.git
+git clone https://github.com/IgorTomasz/casino-games-service.git
 
 # Przejdź do katalogu projektu
 cd games_service
