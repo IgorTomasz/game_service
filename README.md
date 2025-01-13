@@ -67,12 +67,16 @@ dotnet run
 ## 🚀 Endpointy API
 
 ### Zarządzanie grami
-```http
+
 # Pobieranie wszystkich dostępnych gier
+```http
 GET /Game/games
+```
 
 # Pobieranie gier według kategorii
+```http
 GET /Game/games/{category}
+```
 # gdzie category to:
 # 0 - Card
 # 1 - Arcade
@@ -80,6 +84,7 @@ GET /Game/games/{category}
 # 3 - Strategy
 
 # Dodawanie nowej gry
+```http
 POST /Game/addGame
 ```
 
